@@ -181,3 +181,18 @@ Word CPU::popWord()
     m_registers.stackPointer += 2;
     return word;
 }
+
+Word CPU::getWord(Word address)
+{
+    return ((m_memory[address + 1] << 8) | m_memory[address]);
+}
+
+void CPU::setParity(std::int16_t value)
+{
+    Byte byte = 0;
+    for (auto i = 0; i < 8; ++i)
+    {
+        byte += ((0x80 >> i) & value);
+    }
+    m_flags.p = !(byte % 2);
+}

@@ -112,12 +112,12 @@ namespace I8080
 
         struct
         {
-            Byte psw     : 1; //Processor Status Word
-            Byte s       : 1;
-            Byte z       : 1;
-            Byte ac      : 1;
-            Byte p       : 1;
-            Byte cy      : 1; //Carry
+            Byte psw     : 1; //processor status word flag
+            Byte s       : 1; //sign flag
+            Byte z       : 1; //zero flag
+            Byte ac      : 1; //aux carry flag
+            Byte p       : 1; //parity flag
+            Byte cy      : 1; //carry flag
             Byte padding : 2;
         }m_flags;
 
@@ -138,6 +138,10 @@ namespace I8080
 
         void pushWord(Word);
         Word popWord();
+
+        Word getWord(Word);
+
+        void inline setParity(std::int16_t);
 
         //opcode list is pretty large so it has its
         //own header file included here

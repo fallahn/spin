@@ -51,6 +51,7 @@ void ldaxb(); void ldaxd(); void lda();  void staxb(); void staxd(); void sta();
 void xchg(); void xthl();
 
 //8 bit ADD instructions
+void inline accumulate(std::int16_t);
 void adda(); void addb(); void addc(); void addd(); void adde(); void addh(); void addl(); void addm(); void adi();
 
 //8 bit ADC add with carry instructions
@@ -69,6 +70,7 @@ void dadb(); void dadd(); void dadh(); void dadsp();
 void di(); void ei(); void nop(); void hlt();
 
 //8 bit INC instructions
+void inline inc8(std::int16_t, std::uint8_t);
 void inra(); void inrb(); void inrc(); void inrd(); void inre(); void inrh(); void inrl(); void inrm();
 
 //8 bit DEC instructions
@@ -80,7 +82,7 @@ void inxb(); void inxd(); void inxh(); void inxsp();
 //8 bit DCX pair instructions
 void dcxb(); void dcxd(); void dcxh(); void dcxsp();
 
-//accumulator and flag special instructons
+//accumulator and flag special instructions
 void daa(); void cma(); void stc(); void cmc();
 
 //rotate instructions
@@ -88,13 +90,15 @@ void rlc(); void rrc(); void ral(); void rar();
 
 //-----logic instructions-----//
 //AND
+void inline bitlogic(std::int16_t);
 void anaa(); void anab(); void anac(); void anad(); void anae(); void anah(); void anal(); void anam(); void ani();
 //XOR
 void xraa(); void xrab(); void xrac(); void xrad(); void xrae(); void xrah(); void xral(); void xram(); void xri();
 //OR
-void oraa(); void prab(); void orac(); void orad(); void orae(); void orah(); void oral(); void oram(); void ori();
+void oraa(); void orab(); void orac(); void orad(); void orae(); void orah(); void oral(); void oram(); void ori();
 //compare
-void cmpa(); void cmpb(); void cmpc(); void cmpd(); void cmpe(); void cmph(); void cmpl(); void cmpm(); void cmi();
+void inline compare(std::int16_t);
+void cmpa(); void cmpb(); void cmpc(); void cmpd(); void cmpe(); void cmph(); void cmpl(); void cmpm(); void cpi();
 
 //----branching instructions----//
 //jump
