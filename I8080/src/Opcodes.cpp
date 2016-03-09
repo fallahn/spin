@@ -23,6 +23,8 @@ source distribution.
 
 #include <I8080/I8080.hpp>
 
+#include <cassert>
+
 using namespace I8080;
 
 void CPU::notImpl()
@@ -1375,11 +1377,346 @@ void CPU::pchl()
 }
 
 //calls
+//0xCD
+void CPU::call()
+{
+    m_registers.stackPointer -= 2;
+    pushWord(m_registers.programCounter + 3);
+    m_registers.programCounter = getWord(m_registers.programCounter + 1);
+}
+//0xC4
+void CPU::cnz()
+{
+    if (!m_flags.z)
+    {
+        call();
+    }
+    else
+    {
+        m_registers.programCounter += 3;
+    }
+}
+//0xCC
+void CPU::cz() 
+{
+    if (m_flags.z)
+    {
+        call();
+    }
+    else
+    {
+        m_registers.programCounter += 3;
+    }
+}
+//0xD4
+void CPU::cnc() 
+{
+    if (!m_flags.cy)
+    {
+        call();
+    }
+    else
+    {
+        m_registers.programCounter += 3;
+    }
+}
+//0xDC
+void CPU::cc()
+{
+    if (m_flags.cy)
+    {
+        call();
+    }
+    else
+    {
+        m_registers.programCounter += 3;
+    }
+}
+//0xE4
+void CPU::cpo()
+{
+    if (!m_flags.p)
+    {
+        call();
+    }
+    else
+    {
+        m_registers.programCounter += 3;
+    }
+}
+//0xEC
+void CPU::cpe()
+{
+    if (m_flags.p)
+    {
+        call();
+    }
+    else
+    {
+        m_registers.programCounter += 3;
+    }
+}
+//0xF4
+void CPU::cp()
+{
+    if (!m_flags.s)
+    {
+        call();
+    }
+    else
+    {
+        m_registers.programCounter += 3;
+    }
+}
+//0xFC
+void CPU::cm()
+{
+    if (m_flags.s)
+    {
+        call();
+    }
+    else
+    {
+        m_registers.programCounter += 3;
+    }
+}
 
 //returns
+//0xC9
+void CPU::ret()
+{
+    assert(m_registers.stackPointer < 0xFFFF);
+    m_registers.programCounter = popWord();
+    m_registers.stackPointer += 2;
+}
+//0xC0
+void CPU::rnz()
+{
+    if (!m_flags.z)
+    {
+        ret();
+    }
+    else
+    {
+        m_registers.programCounter++;
+    }
+}
+//0xC8
+void CPU::rz()
+{
+    if (m_flags.z)
+    {
+        ret();
+    }
+    else
+    {
+        m_registers.programCounter++;
+    }
+}
+//0xD0
+void CPU::rnc()
+{
+    if (!m_flags.cy)
+    {
+        ret();
+    }
+    else
+    {
+        m_registers.programCounter++;
+    }
+}
+//0xD8
+void CPU::rc()
+{
+    if (m_flags.cy)
+    {
+        ret();
+    }
+    else
+    {
+        m_registers.programCounter++;
+    }
+}
+//0xE0
+void CPU::rpo()
+{
+    if (!m_flags.p)
+    {
+        ret();
+    }
+    else
+    {
+        m_registers.programCounter++;
+    }
+}
+//0xE8
+void CPU::rpe()
+{
+    if (m_flags.p)
+    {
+        ret();
+    }
+    else
+    {
+        m_registers.programCounter++;
+    }
+}
+//0xF0
+void CPU::rp()
+{
+    if (!m_flags.s)
+    {
+        ret();
+    }
+    else
+    {
+        m_registers.programCounter++;
+    }
+}
+//0xF8
+void CPU::rm()
+{
+    if (m_flags.s)
+    {
+        ret();
+    }
+    else
+    {
+        m_registers.programCounter++;
+    }
+}
+
 
 //RST
+void CPU::rst()
+{
+    m_memory[m_registers.stackPointer] = m_registers.programCounter;
+    m_registers.stackPointer -= 2;
+}
+//0xC7
+void CPU::rst0()
+{
+    rst();
+    m_registers.programCounter = 0;
+}
+//0xCF
+void CPU::rst1()
+{
+    rst();
+    m_registers.programCounter = 0x0008;
+}
+//0xD7
+void CPU::rst2()
+{
+    rst();
+    m_registers.programCounter = 0x0010;
+}
+//0xDF
+void CPU::rst3()
+{
+    rst();
+    m_registers.programCounter = 0x0018;
+}
+//0xE7
+void CPU::rst4()
+{
+    rst();
+    m_registers.programCounter = 0x0020;
+}
+//0xEF
+void CPU::rst5()
+{
+    rst();
+    m_registers.programCounter = 0x0028;
+}
+//0xF7
+void CPU::rst6()
+{
+    rst();
+    m_registers.programCounter = 0x0030;
+}
+//0xFF
+void CPU::rst7()
+{
+    rst();
+    m_registers.programCounter = 0x0038;
+}
 
+
+//----stack operations----//
+//0xC5
+void CPU::pushb()
+{
+    m_registers.stackPointer -= 2;
+    pushWord(m_registers.BC);
+    m_registers.programCounter++;
+}
+//0xD5
+void CPU::pushd()
+{
+    m_registers.stackPointer -= 2;
+    pushWord(m_registers.DE);
+    m_registers.programCounter++;
+}
+//0xE5
+void CPU::pushh()
+{
+    m_registers.stackPointer -= 2;
+    pushWord(m_registers.HL);
+    m_registers.programCounter++;
+}
+//0xF5
+void CPU::pushpsw()
+{
+    setPSW();
+    m_memory[m_registers.stackPointer - 1] = m_flags.psw;
+    m_memory[m_registers.stackPointer - 2] = m_registers.A;
+    m_registers.stackPointer -= 2;
+    m_registers.programCounter++;
+}
+//0xC1
+void CPU::popb()
+{
+    m_registers.BC = popWord();
+    m_registers.stackPointer += 2;
+    m_registers.programCounter++;
+}
+//0xD1
+void CPU::popd()
+{
+    m_registers.DE = popWord();
+    m_registers.stackPointer += 2;
+    m_registers.programCounter++;
+}
+//0xE1
+void CPU::poph()
+{
+    m_registers.HL = popWord();
+    m_registers.stackPointer += 2;
+    m_registers.programCounter++;
+}
+//0xF1
+void CPU::poppsw()
+{
+    m_registers.A = m_memory[m_registers.stackPointer];
+    m_flags.psw = m_memory[m_registers.stackPointer + 1];
+    m_registers.stackPointer += 2;
+    getFlagsFromPSW();
+    m_registers.programCounter++;
+}
+
+
+//----IO instructions----//
+//0xDB
+void CPU::in()
+{
+
+}
+//0xD3
+void CPU::out()
+{
+
+}
 
 
 //-----16 bit transfer immediate instructions-----//

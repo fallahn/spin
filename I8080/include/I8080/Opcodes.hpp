@@ -104,10 +104,11 @@ void cmpa(); void cmpb(); void cmpc(); void cmpd(); void cmpe(); void cmph(); vo
 //jump
 void jmp(); void jnz(); void jz(); void jnc(); void jc(); void jpo(); void jpe(); void jp(); void jm(); void pchl();
 //call
-void call(); void cnz(); void cz(); void cnc(); void cc(); void cpo(); void cpe(); void cp(); void cm();
+void inline call(); void cnz(); void cz(); void cnc(); void cc(); void cpo(); void cpe(); void cp(); void cm();
 //return
-void ret(); void rnz(); void rz(); void rnc(); void rc(); void rpo(); void rpe(); void rp(); void rm();
+void inline ret(); void rnz(); void rz(); void rnc(); void rc(); void rpo(); void rpe(); void rp(); void rm();
 //RST
+void inline rst();
 void rst0(); void rst1(); void rst2(); void rst3(); void rst4(); void rst5(); void rst6(); void rst7();
 
 //stack operation instructions

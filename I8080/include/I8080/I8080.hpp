@@ -111,14 +111,14 @@ namespace I8080
         }m_registers;
 
         struct
-        {
-            Byte psw     : 1; //processor status word flag
+        {            
             Byte s       : 1; //sign flag
             Byte z       : 1; //zero flag
             Byte ac      : 1; //aux carry flag
             Byte p       : 1; //parity flag
             Byte cy      : 1; //carry flag
-            Byte padding : 2;
+            Byte padding : 3;
+            Word psw     = 0;         //processor status word
         }m_flags;
 
         std::int32_t m_cycleCount;
@@ -142,6 +142,8 @@ namespace I8080
         Word getWord(Word);
 
         void inline setParity(std::int16_t);
+        void inline setPSW();
+        void inline getFlagsFromPSW();
 
         //opcode list is pretty large so it has its
         //own header file included here
