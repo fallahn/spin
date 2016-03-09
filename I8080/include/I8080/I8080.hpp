@@ -69,6 +69,9 @@ namespace I8080
 
     private:
 
+        using Opcode = void (*)();
+        std::array<Opcode, 256> m_opcodes;
+
         struct Registers final
         {
         public:
@@ -118,7 +121,7 @@ namespace I8080
             Byte p       : 1; //parity flag
             Byte cy      : 1; //carry flag
             Byte padding : 3;
-            Word psw     = 0;         //processor status word
+            Byte psw     = 0;         //processor status word
         }m_flags;
 
         std::int32_t m_cycleCount;

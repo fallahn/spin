@@ -1710,12 +1710,12 @@ void CPU::poppsw()
 //0xDB
 void CPU::in()
 {
-
+    m_registers.programCounter++;
 }
 //0xD3
 void CPU::out()
 {
-
+    m_registers.programCounter++;
 }
 
 

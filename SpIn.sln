@@ -4,6 +4,9 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 VisualStudioVersion = 14.0.24720.0
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "SpIn", "SpIn\SpIn.vcxproj", "{AAF4686B-B9E9-46AF-B2BB-18DD0BD987B1}"
+	ProjectSection(ProjectDependencies) = postProject
+		{243A3E6F-DAB3-41F3-BC53-24E8DA3993D7} = {243A3E6F-DAB3-41F3-BC53-24E8DA3993D7}
+	EndProjectSection
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "I8080", "I8080\I8080.vcxproj", "{243A3E6F-DAB3-41F3-BC53-24E8DA3993D7}"
 EndProject

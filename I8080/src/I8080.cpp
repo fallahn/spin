@@ -30,10 +30,6 @@ using namespace I8080;
 
 namespace
 {
-    //opcode IDs and jump table - TODO make this a member
-    using Opcode = void(*)();
-    std::array<Opcode, 256> opcodes; //TODO initialise this when opcode implemented
-
     //maps number of I8080 cycles take by each opcode
     const std::array<Byte, 256> opCycles = 
     {
@@ -92,7 +88,29 @@ CPU::CPU()
     m_flags.cy = 0;
 
     std::memset(m_memory.data(), 0, MEM_SIZE);
+    m_memory[1] = 0xC3; //jumps to zero in inf loop by default
     std::memset(m_ports.data(), 0, sizeof(Word) * PORT_COUNT);
+
+    //opcode pointer table - EEEEE these should all be static :S
+    m_opcodes =
+    {
+        this->nop,     this->lxib,    this->staxb,   this->inxb,    this->inrb,    this->dcrb,    this->mvib,    this->rlc,     this->notImpl, this->dadb,    this->ldaxb,   this->dcxb,    this->inrc,    this->dcrc,    this->mvic,    this->rrc,
+        this->notImpl, this->lxid,    this->staxd,   this->inxd,    this->inrd,    this->dcrd,    this->mvid,    this->ral,     this->notImpl, this->dadd,    this->ldaxd,   this->dcxd,    this->inre,    this->dcre,    this->mvie,    rar,
+        this->notImpl, this->lxih,    this->shld,    this->inxh,    this->inrh,    this->dcrh,    this->mvih,    this->daa,     this->notImpl, this->dadh,    this->lhld,    this->dcxh,    this->inrl,    this->dcrl,    this->mvil,    this->cma,
+        this->notImpl, this->lxisp,   this->sta,     this->notImpl, this->inrm,    this->dcrm,    this->mvim,    this->stc,     this->notImpl, this->dadsp,   this->lda,     this->dcxsp,   this->inra,    this->dcra,    this->mvia,    this->cmc,
+        this->movbb,   this->movbc,   this->movbd,   this->movbe,   this->movbh,   this->movbl,   this->movbm,   this->movba,   this->movcb,   this->movcc,   this->movcd,   this->movce,   this->movch,   this->movcl,   this->movcm,   this->movca,
+        this->movdb,   this->movdc,   this->movdd,   this->movde,   this->movdh,   this->movdl,   this->movdm,   this->movda,   this->moveb,   this->movec,   this->moved,   this->movee,   this->moveh,   this->movel,   this->movem,   this->movea,
+        this->movhb,   this->movhc,   this->movhd,   this->movhe,   this->movhh,   this->movhl,   this->movhm,   this->movha,   this->movlb,   this->movlc,   this->movld,   this->movle,   this->movlh,   this->movll,   this->movlm,   this->movla,
+        this->movmb,   this->movmc,   this->movmd,   this->movme,   this->movmh,   this->movml,   this->hlt,     this->movma,   this->movab,   this->movac,   this->movad,   this->movae,   this->movah,   this->moval,   this->movam,   this->movaa,
+        this->addb,    this->addc,    this->addd,    this->adde,    this->addh,    this->addl,    this->addm,    this->adda,    this->adcb,    this->adcc,    this->adcd,    this->adce,    this->adch,    this->adcl,    this->adcm,    this->adca,
+        this->subb,    this->subc,    this->subd,    this->sube,    this->subh,    this->subl,    this->subm,    this->sbba,    this->sbbb,    this->sbbc,    this->sbbd,    this->sbbe,    this->sbbh,    this->sbbl,    this->sbbm,    this->sbba,
+        this->anab,    this->anac,    this->anad,    this->anae,    this->anah,    this->anal,    this->anam,    this->anaa,    this->xrab,    this->xrac,    this->xrad,    this->xrae,    this->xrah,    this->xral,    this->xram,    this->xraa,
+        this->orab,    this->orac,    this->orad,    this->orae,    this->orah,    this->oral,    this->oram,    this->oraa,    this->cmpb,    this->cmpc,    this->cmpd,    this->cmpe,    this->cmph,    this->cmpl,    this->cmpm,    this->cmpa,
+        this->rnz,     this->popb,    this->jnz,     this->jmp,     this->cnz,     this->pushb,   this->adi,     this->rst0,    this->rz,      this->ret,     this->jz,      this->notImpl, this->cz,      this->call,    this->aci,     this->rst1,
+        this->rnc,     this->popd,    this->jnc,     this->out,     this->cnc,     this->pushd,   this->sui,     this->rst2,    this->rc,      this->notImpl, this->jc,      this->in,      this->cc,      this->notImpl, this->sbi,     this->rst3,
+        this->rpo,     this->poph,    this->jpo,     this->xthl,    this->cpo,     this->pushh,   this->ani,     this->rst4,    this->cpe,     this->pchl,    this->jpe,     this->xchg,    this->cpe,     this->notImpl, this->xri,     this->rst5,
+        this->cp,      this->poppsw,  this->jp,      this->di,      this->cp,      this->pushpsw, this->ori,     this->rst6,    this->rm,      this->sphl,    this->jm,      this->ei,      this->cm,      this->notImpl, this->cpi,     this->rst7
+    };
 }
 
 //public
@@ -136,7 +154,7 @@ void CPU::update(std::int32_t count)
     while (m_cycleCount)
     {
         m_currentOpcode = m_memory[m_registers.programCounter];
-        opcodes[m_currentOpcode]();
+        m_opcodes[m_currentOpcode]();
         m_cycleCount -= opCycles[m_currentOpcode];
     }
 }
