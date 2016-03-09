@@ -25,6 +25,8 @@ source distribution.
 #define SP_MACHINE_HPP_
 
 #include <SFML/Graphics/RenderWindow.hpp>
+#include <SFML/Graphics/Text.hpp>
+#include <SFML/Graphics/Font.hpp>
 
 #include <I8080/I8080.hpp>
 
@@ -42,6 +44,9 @@ private:
     sf::RenderWindow m_renderWindow;
 
     I8080::CPU m_processor;
+
+    sf::Text m_infoText;
+    sf::Font m_font;
 
     void update(float dt);
     void draw();

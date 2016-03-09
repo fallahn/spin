@@ -27,6 +27,34 @@ source distribution.
 
 using namespace I8080;
 
+void CPU::setParity(std::int16_t value)
+{
+    Byte byte = 0;
+    for (auto i = 0; i < 8; ++i)
+    {
+        byte += ((0x80 >> i) & value);
+    }
+    m_flags.p = !(byte % 2);
+}
+
+void CPU::setPSW()
+{
+    (m_flags.s) ? m_flags.psw |= 0x80 : m_flags.psw &= ~0x80;
+    (m_flags.z) ? m_flags.psw |= 0x40 : m_flags.psw &= ~0x40;
+    (m_flags.ac) ? m_flags.psw |= 0x10 : m_flags.psw &= ~0x10;
+    (m_flags.p) ? m_flags.psw |= 0x04 : m_flags.psw &= ~0x04;
+    (m_flags.cy) ? m_flags.psw |= 0x01 : m_flags.psw &= ~0x01;
+}
+
+void CPU::getFlagsFromPSW()
+{
+    m_flags.s = m_flags.psw & 0x80;
+    m_flags.z = m_flags.psw & 0x40;
+    m_flags.ac = m_flags.psw & 0x10;
+    m_flags.p = m_flags.psw & 0x04;
+    m_flags.cy = m_flags.psw & 0x01;
+}
+
 void CPU::notImpl()
 {
     throw("Opcode not implemented, or illegal");
@@ -1005,6 +1033,12 @@ void CPU::dcxd()
 void CPU::dcxh()
 {
     m_registers.HL--;
+    m_registers.programCounter++;
+}
+//0x3B
+void CPU::dcxsp()
+{
+    m_registers.stackPointer--;
     m_registers.programCounter++;
 }
 

@@ -67,9 +67,14 @@ namespace I8080
         */
         bool loadROM(const std::string&, Word);
 
+        /*!
+        \brief Outputs some info in a string
+        */
+        std::string getInfo() const;
+
     private:
 
-        using Opcode = void (*)();
+        using Opcode = void (CPU::*)();
         std::array<Opcode, 256> m_opcodes;
 
         struct Registers final

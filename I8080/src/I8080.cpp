@@ -26,6 +26,9 @@ source distribution.
 #include <cstring>
 #include <cassert>
 
+//this hides some of the horrors of using pointer to member functions
+#define EXEC_OPCODE(opcode) ((*this).*(m_opcodes[opcode]))()
+
 using namespace I8080;
 
 namespace
@@ -94,22 +97,22 @@ CPU::CPU()
     //opcode pointer table - EEEEE these should all be static :S
     m_opcodes =
     {
-        this->nop,     this->lxib,    this->staxb,   this->inxb,    this->inrb,    this->dcrb,    this->mvib,    this->rlc,     this->notImpl, this->dadb,    this->ldaxb,   this->dcxb,    this->inrc,    this->dcrc,    this->mvic,    this->rrc,
-        this->notImpl, this->lxid,    this->staxd,   this->inxd,    this->inrd,    this->dcrd,    this->mvid,    this->ral,     this->notImpl, this->dadd,    this->ldaxd,   this->dcxd,    this->inre,    this->dcre,    this->mvie,    rar,
-        this->notImpl, this->lxih,    this->shld,    this->inxh,    this->inrh,    this->dcrh,    this->mvih,    this->daa,     this->notImpl, this->dadh,    this->lhld,    this->dcxh,    this->inrl,    this->dcrl,    this->mvil,    this->cma,
-        this->notImpl, this->lxisp,   this->sta,     this->notImpl, this->inrm,    this->dcrm,    this->mvim,    this->stc,     this->notImpl, this->dadsp,   this->lda,     this->dcxsp,   this->inra,    this->dcra,    this->mvia,    this->cmc,
-        this->movbb,   this->movbc,   this->movbd,   this->movbe,   this->movbh,   this->movbl,   this->movbm,   this->movba,   this->movcb,   this->movcc,   this->movcd,   this->movce,   this->movch,   this->movcl,   this->movcm,   this->movca,
-        this->movdb,   this->movdc,   this->movdd,   this->movde,   this->movdh,   this->movdl,   this->movdm,   this->movda,   this->moveb,   this->movec,   this->moved,   this->movee,   this->moveh,   this->movel,   this->movem,   this->movea,
-        this->movhb,   this->movhc,   this->movhd,   this->movhe,   this->movhh,   this->movhl,   this->movhm,   this->movha,   this->movlb,   this->movlc,   this->movld,   this->movle,   this->movlh,   this->movll,   this->movlm,   this->movla,
-        this->movmb,   this->movmc,   this->movmd,   this->movme,   this->movmh,   this->movml,   this->hlt,     this->movma,   this->movab,   this->movac,   this->movad,   this->movae,   this->movah,   this->moval,   this->movam,   this->movaa,
-        this->addb,    this->addc,    this->addd,    this->adde,    this->addh,    this->addl,    this->addm,    this->adda,    this->adcb,    this->adcc,    this->adcd,    this->adce,    this->adch,    this->adcl,    this->adcm,    this->adca,
-        this->subb,    this->subc,    this->subd,    this->sube,    this->subh,    this->subl,    this->subm,    this->sbba,    this->sbbb,    this->sbbc,    this->sbbd,    this->sbbe,    this->sbbh,    this->sbbl,    this->sbbm,    this->sbba,
-        this->anab,    this->anac,    this->anad,    this->anae,    this->anah,    this->anal,    this->anam,    this->anaa,    this->xrab,    this->xrac,    this->xrad,    this->xrae,    this->xrah,    this->xral,    this->xram,    this->xraa,
-        this->orab,    this->orac,    this->orad,    this->orae,    this->orah,    this->oral,    this->oram,    this->oraa,    this->cmpb,    this->cmpc,    this->cmpd,    this->cmpe,    this->cmph,    this->cmpl,    this->cmpm,    this->cmpa,
-        this->rnz,     this->popb,    this->jnz,     this->jmp,     this->cnz,     this->pushb,   this->adi,     this->rst0,    this->rz,      this->ret,     this->jz,      this->notImpl, this->cz,      this->call,    this->aci,     this->rst1,
-        this->rnc,     this->popd,    this->jnc,     this->out,     this->cnc,     this->pushd,   this->sui,     this->rst2,    this->rc,      this->notImpl, this->jc,      this->in,      this->cc,      this->notImpl, this->sbi,     this->rst3,
-        this->rpo,     this->poph,    this->jpo,     this->xthl,    this->cpo,     this->pushh,   this->ani,     this->rst4,    this->cpe,     this->pchl,    this->jpe,     this->xchg,    this->cpe,     this->notImpl, this->xri,     this->rst5,
-        this->cp,      this->poppsw,  this->jp,      this->di,      this->cp,      this->pushpsw, this->ori,     this->rst6,    this->rm,      this->sphl,    this->jm,      this->ei,      this->cm,      this->notImpl, this->cpi,     this->rst7
+        &CPU::nop,     &CPU::lxib,    &CPU::staxb,   &CPU::inxb,    &CPU::inrb,    &CPU::dcrb,    &CPU::mvib,    &CPU::rlc,     &CPU::notImpl, &CPU::dadb,    &CPU::ldaxb,   &CPU::dcxb,    &CPU::inrc,    &CPU::dcrc,    &CPU::mvic,    &CPU::rrc,
+        &CPU::notImpl, &CPU::lxid,    &CPU::staxd,   &CPU::inxd,    &CPU::inrd,    &CPU::dcrd,    &CPU::mvid,    &CPU::ral,     &CPU::notImpl, &CPU::dadd,    &CPU::ldaxd,   &CPU::dcxd,    &CPU::inre,    &CPU::dcre,    &CPU::mvie,    &CPU::rar,
+        &CPU::notImpl, &CPU::lxih,    &CPU::shld,    &CPU::inxh,    &CPU::inrh,    &CPU::dcrh,    &CPU::mvih,    &CPU::daa,     &CPU::notImpl, &CPU::dadh,    &CPU::lhld,    &CPU::dcxh,    &CPU::inrl,    &CPU::dcrl,    &CPU::mvil,    &CPU::cma,
+        &CPU::notImpl, &CPU::lxisp,   &CPU::sta,     &CPU::notImpl, &CPU::inrm,    &CPU::dcrm,    &CPU::mvim,    &CPU::stc,     &CPU::notImpl, &CPU::dadsp,   &CPU::lda,     &CPU::dcxsp,   &CPU::inra,    &CPU::dcra,    &CPU::mvia,    &CPU::cmc,
+        &CPU::movbb,   &CPU::movbc,   &CPU::movbd,   &CPU::movbe,   &CPU::movbh,   &CPU::movbl,   &CPU::movbm,   &CPU::movba,   &CPU::movcb,   &CPU::movcc,   &CPU::movcd,   &CPU::movce,   &CPU::movch,   &CPU::movcl,   &CPU::movcm,   &CPU::movca,
+        &CPU::movdb,   &CPU::movdc,   &CPU::movdd,   &CPU::movde,   &CPU::movdh,   &CPU::movdl,   &CPU::movdm,   &CPU::movda,   &CPU::moveb,   &CPU::movec,   &CPU::moved,   &CPU::movee,   &CPU::moveh,   &CPU::movel,   &CPU::movem,   &CPU::movea,
+        &CPU::movhb,   &CPU::movhc,   &CPU::movhd,   &CPU::movhe,   &CPU::movhh,   &CPU::movhl,   &CPU::movhm,   &CPU::movha,   &CPU::movlb,   &CPU::movlc,   &CPU::movld,   &CPU::movle,   &CPU::movlh,   &CPU::movll,   &CPU::movlm,   &CPU::movla,
+        &CPU::movmb,   &CPU::movmc,   &CPU::movmd,   &CPU::movme,   &CPU::movmh,   &CPU::movml,   &CPU::hlt,     &CPU::movma,   &CPU::movab,   &CPU::movac,   &CPU::movad,   &CPU::movae,   &CPU::movah,   &CPU::moval,   &CPU::movam,   &CPU::movaa,
+        &CPU::addb,    &CPU::addc,    &CPU::addd,    &CPU::adde,    &CPU::addh,    &CPU::addl,    &CPU::addm,    &CPU::adda,    &CPU::adcb,    &CPU::adcc,    &CPU::adcd,    &CPU::adce,    &CPU::adch,    &CPU::adcl,    &CPU::adcm,    &CPU::adca,
+        &CPU::subb,    &CPU::subc,    &CPU::subd,    &CPU::sube,    &CPU::subh,    &CPU::subl,    &CPU::subm,    &CPU::sbba,    &CPU::sbbb,    &CPU::sbbc,    &CPU::sbbd,    &CPU::sbbe,    &CPU::sbbh,    &CPU::sbbl,    &CPU::sbbm,    &CPU::sbba,
+        &CPU::anab,    &CPU::anac,    &CPU::anad,    &CPU::anae,    &CPU::anah,    &CPU::anal,    &CPU::anam,    &CPU::anaa,    &CPU::xrab,    &CPU::xrac,    &CPU::xrad,    &CPU::xrae,    &CPU::xrah,    &CPU::xral,    &CPU::xram,    &CPU::xraa,
+        &CPU::orab,    &CPU::orac,    &CPU::orad,    &CPU::orae,    &CPU::orah,    &CPU::oral,    &CPU::oram,    &CPU::oraa,    &CPU::cmpb,    &CPU::cmpc,    &CPU::cmpd,    &CPU::cmpe,    &CPU::cmph,    &CPU::cmpl,    &CPU::cmpm,    &CPU::cmpa,
+        &CPU::rnz,     &CPU::popb,    &CPU::jnz,     &CPU::jmp,     &CPU::cnz,     &CPU::pushb,   &CPU::adi,     &CPU::rst0,    &CPU::rz,      &CPU::ret,     &CPU::jz,      &CPU::notImpl, &CPU::cz,      &CPU::call,    &CPU::aci,     &CPU::rst1,
+        &CPU::rnc,     &CPU::popd,    &CPU::jnc,     &CPU::out,     &CPU::cnc,     &CPU::pushd,   &CPU::sui,     &CPU::rst2,    &CPU::rc,      &CPU::notImpl, &CPU::jc,      &CPU::in,      &CPU::cc,      &CPU::notImpl, &CPU::sbi,     &CPU::rst3,
+        &CPU::rpo,     &CPU::poph,    &CPU::jpo,     &CPU::xthl,    &CPU::cpo,     &CPU::pushh,   &CPU::ani,     &CPU::rst4,    &CPU::cpe,     &CPU::pchl,    &CPU::jpe,     &CPU::xchg,    &CPU::cpe,     &CPU::notImpl, &CPU::xri,     &CPU::rst5,
+        &CPU::cp,      &CPU::poppsw,  &CPU::jp,      &CPU::di,      &CPU::cp,      &CPU::pushpsw, &CPU::ori,     &CPU::rst6,    &CPU::rm,      &CPU::sphl,    &CPU::jm,      &CPU::ei,      &CPU::cm,      &CPU::notImpl, &CPU::cpi,     &CPU::rst7
     };
 }
 
@@ -140,6 +143,7 @@ void CPU::reset()
     m_flags.cy = 0;
 
     std::memset(m_memory.data(), 0, MEM_SIZE);
+    m_memory[1] = 0xC3; //jumps to zero in inf loop by default
     std::memset(m_ports.data(), 0, sizeof(Word) * PORT_COUNT);
 }
 
@@ -151,10 +155,10 @@ void CPU::update(std::int32_t count)
     //then execute it and update the number of CPU
     //cycles taken for that opcode
     m_cycleCount = count;
-    while (m_cycleCount)
+    while (m_cycleCount > 0)
     {
         m_currentOpcode = m_memory[m_registers.programCounter];
-        m_opcodes[m_currentOpcode]();
+        EXEC_OPCODE(m_currentOpcode);
         m_cycleCount -= opCycles[m_currentOpcode];
     }
 }
@@ -185,6 +189,16 @@ bool CPU::loadROM(const std::string& path, Word address)
     return false;
 }
 
+std::string CPU::getInfo() const
+{
+    std::string str
+    (
+        "Program Counter: " + std::to_string(m_registers.programCounter) +
+        "\nCurrent Opcode: " + std::to_string(m_currentOpcode) 
+    );
+    return std::move(str);
+}
+
 //private
 void CPU::pushWord(Word word)
 {
@@ -203,32 +217,4 @@ Word CPU::popWord()
 Word CPU::getWord(Word address)
 {
     return ((m_memory[address + 1] << 8) | m_memory[address]);
-}
-
-void CPU::setParity(std::int16_t value)
-{
-    Byte byte = 0;
-    for (auto i = 0; i < 8; ++i)
-    {
-        byte += ((0x80 >> i) & value);
-    }
-    m_flags.p = !(byte % 2);
-}
-
-void CPU::setPSW()
-{
-    (m_flags.s)  ? m_flags.psw |= 0x80 : m_flags.psw &= ~0x80;
-    (m_flags.z)  ? m_flags.psw |= 0x40 : m_flags.psw &= ~0x40;
-    (m_flags.ac) ? m_flags.psw |= 0x10 : m_flags.psw &= ~0x10;
-    (m_flags.p)  ? m_flags.psw |= 0x04 : m_flags.psw &= ~0x04;
-    (m_flags.cy) ? m_flags.psw |= 0x01 : m_flags.psw &= ~0x01;
-}
-
-void CPU::getFlagsFromPSW()
-{
-    m_flags.s  = m_flags.psw & 0x80;
-    m_flags.z  = m_flags.psw & 0x40;
-    m_flags.ac = m_flags.psw & 0x10;
-    m_flags.p  = m_flags.psw & 0x04;
-    m_flags.cy = m_flags.psw & 0x01;
 }

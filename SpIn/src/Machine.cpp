@@ -28,13 +28,19 @@ source distribution.
 
 Machine::Machine()
 {
-
+    if (m_font.loadFromFile("assets/fonts/VeraMono.ttf"))
+    {
+        m_infoText.setFont(m_font);
+        m_infoText.setPosition(15.f, 15.f);
+        m_infoText.setCharacterSize(12u);
+    }
 }
 
 //public
 void Machine::run()
 {
     m_renderWindow.create({ 800, 600 }, "SpIn");
+    m_renderWindow.setFramerateLimit(120);
 
     sf::Clock frameClock;
 
@@ -46,6 +52,16 @@ void Machine::run()
             if (evt.type == sf::Event::Closed)
             {
                 m_renderWindow.close();
+            }
+            else if (evt.type == sf::Event::KeyReleased)
+            {
+                switch (evt.key.code)
+                {
+                default:break;
+                case sf::Keyboard::Escape:
+                    m_renderWindow.close();
+                    break;
+                }
             }
         }
 
@@ -68,12 +84,16 @@ void Machine::update(float dt)
 {
     //34000 * 60 = 2,040,000
     //as close as we get to 2MHz
-    //m_processor.update(34000); //haven't created opcode jump table yet! duh
+    m_processor.update(34000);
+
+    //TODO split updates and raise display interrupts
+
+    m_infoText.setString(m_processor.getInfo());
 }
 
 void Machine::draw()
 {
     m_renderWindow.clear(sf::Color::Blue);
-
+    m_renderWindow.draw(m_infoText);
     m_renderWindow.display();
 }
