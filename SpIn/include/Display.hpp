@@ -25,7 +25,7 @@ source distribution.
 #define SP_DISPLAY_HPP_
 
 #include <SFML/Graphics/Texture.hpp>
-#include <SFML/Graphics/Sprite.hpp>
+#include <SFML/Graphics/Vertex.hpp>
 #include <SFML/Graphics/Drawable.hpp>
 #include <SFML/Graphics/Transformable.hpp>
 
@@ -43,8 +43,9 @@ public:
     void updateBuffer(const std::uint8_t*);
 
 private:
-    sf::Texture m_texture;
-    sf::Sprite m_sprite;
+    sf::Texture m_baseTexture;
+    sf::Texture m_overlayTexture;
+    std::array<sf::Vertex, 4u> m_vertexArray;
 
     std::array<std::uint8_t, 256 * 244 * 4> m_buffer; //using RGBA texture in SFML so w x h x bpp
 
