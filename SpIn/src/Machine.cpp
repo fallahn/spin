@@ -34,11 +34,19 @@ Machine::Machine()
         m_infoText.setPosition(15.f, 15.f);
         m_infoText.setCharacterSize(12u);
     }
+
+    m_display.setPosition(400.f, 300.f);
 }
 
 //public
 void Machine::run()
 {
+    m_processor.loadROM("assets/roms/invaders.h", 0);
+    m_processor.loadROM("assets/roms/invaders.g", 0x0800, false);
+    m_processor.loadROM("assets/roms/invaders.f", 0x1000, false);
+    m_processor.loadROM("assets/roms/invaders.e", 0x1800, false);
+    //m_processor.loadROM("assets/roms/cpudiag.bin", 0x0100);
+
     m_renderWindow.create({ 800, 600 }, "SpIn");
     m_renderWindow.setFramerateLimit(120);
 
@@ -60,6 +68,18 @@ void Machine::run()
                 default:break;
                 case sf::Keyboard::Escape:
                     m_renderWindow.close();
+                    break;
+                case sf::Keyboard::Space:
+                    m_processor.update(1);
+                    break;
+                case sf::Keyboard::Z:
+                    m_processor.update(500);
+                    break;
+                case sf::Keyboard::X:
+                    m_processor.update(1000);
+                    break;
+                case sf::Keyboard::C:
+                    m_processor.update(5000);
                     break;
                 }
             }
@@ -84,16 +104,20 @@ void Machine::update(float dt)
 {
     //34000 * 60 = 2,040,000
     //as close as we get to 2MHz
-    m_processor.update(34000);
+    m_processor.update(17000);
+    m_processor.raiseInterrupt(1);
+    m_processor.update(17000);
+    m_processor.raiseInterrupt(2);
 
-    //TODO split updates and raise display interrupts
 
+    m_display.updateBuffer(m_processor.getVRAM());
     m_infoText.setString(m_processor.getInfo());
 }
 
 void Machine::draw()
 {
     m_renderWindow.clear(sf::Color::Blue);
+    m_renderWindow.draw(m_display);
     m_renderWindow.draw(m_infoText);
     m_renderWindow.display();
 }

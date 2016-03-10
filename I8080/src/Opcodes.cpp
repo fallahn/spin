@@ -48,11 +48,11 @@ void CPU::setPSW()
 
 void CPU::getFlagsFromPSW()
 {
-    m_flags.s = m_flags.psw & 0x80;
-    m_flags.z = m_flags.psw & 0x40;
-    m_flags.ac = m_flags.psw & 0x10;
-    m_flags.p = m_flags.psw & 0x04;
-    m_flags.cy = m_flags.psw & 0x01;
+    m_flags.s = (m_flags.psw & 0x80);
+    m_flags.z = (m_flags.psw & 0x40);
+    m_flags.ac = (m_flags.psw & 0x10);
+    m_flags.p = (m_flags.psw & 0x04);
+    m_flags.cy = (m_flags.psw & 0x01);
 }
 
 void CPU::notImpl()
@@ -559,7 +559,7 @@ void CPU::accumulate(std::int16_t result)
 {
     m_flags.ac = ((m_registers.A & 0xF) > (result & 0xF));
     m_flags.cy = ((result > 0xFF) || (result < 0));
-    m_flags.s = result >> 7;
+    m_flags.s = (result >> 7);
     m_flags.z = !result;
     setParity(result);
 
@@ -772,7 +772,7 @@ void CPU::sbbm()
 {
     accumulate(m_registers.A - m_memory[m_registers.M] - m_flags.cy);
 }
-//0xDe
+//0xDE
 void CPU::sbi()
 {
     std::int16_t result = m_registers.A - m_memory[m_registers.programCounter + 1] - m_flags.cy;
@@ -857,7 +857,7 @@ void CPU::hlt()
 //----increment/decrement instructions----//
 void CPU::inc8(std::int16_t result, std::uint8_t reg)
 {
-    m_flags.ac = ((reg & 0xF) > (result & 0xF));
+    //m_flags.ac = ((reg & 0xF) > (result & 0xF));
     m_flags.s = result >> 7;
     m_flags.z = !(result);
     setParity(result);
@@ -1352,6 +1352,7 @@ void CPU::cpi()
     m_flags.ac = (m_registers.A & 0xF) > (result & 0xF);
     m_flags.cy = (result > 0xFF || result < 0);
     m_flags.s = (result >> 7);
+    m_flags.z = !(result);
     setParity(result);
 
     m_registers.programCounter += 2;
@@ -1414,7 +1415,6 @@ void CPU::pchl()
 //0xCD
 void CPU::call()
 {
-    m_registers.stackPointer -= 2;
     pushWord(m_registers.programCounter + 3);
     m_registers.programCounter = getWord(m_registers.programCounter + 1);
 }
@@ -1521,7 +1521,6 @@ void CPU::ret()
 {
     assert(m_registers.stackPointer < 0xFFFF);
     m_registers.programCounter = popWord();
-    m_registers.stackPointer += 2;
 }
 //0xC0
 void CPU::rnz()
@@ -1681,21 +1680,18 @@ void CPU::rst7()
 //0xC5
 void CPU::pushb()
 {
-    m_registers.stackPointer -= 2;
     pushWord(m_registers.BC);
     m_registers.programCounter++;
 }
 //0xD5
 void CPU::pushd()
 {
-    m_registers.stackPointer -= 2;
     pushWord(m_registers.DE);
     m_registers.programCounter++;
 }
 //0xE5
 void CPU::pushh()
 {
-    m_registers.stackPointer -= 2;
     pushWord(m_registers.HL);
     m_registers.programCounter++;
 }
@@ -1712,21 +1708,18 @@ void CPU::pushpsw()
 void CPU::popb()
 {
     m_registers.BC = popWord();
-    m_registers.stackPointer += 2;
     m_registers.programCounter++;
 }
 //0xD1
 void CPU::popd()
 {
     m_registers.DE = popWord();
-    m_registers.stackPointer += 2;
     m_registers.programCounter++;
 }
 //0xE1
 void CPU::poph()
 {
     m_registers.HL = popWord();
-    m_registers.stackPointer += 2;
     m_registers.programCounter++;
 }
 //0xF1
@@ -1744,12 +1737,12 @@ void CPU::poppsw()
 //0xDB
 void CPU::in()
 {
-    m_registers.programCounter++;
+    m_registers.programCounter += 2;
 }
 //0xD3
 void CPU::out()
 {
-    m_registers.programCounter++;
+    m_registers.programCounter += 2;
 }
 
 

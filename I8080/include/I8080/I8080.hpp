@@ -65,12 +65,17 @@ namespace I8080
         ROMS tend to be split into multiple files and
         each loaded into different parts of memory
         */
-        bool loadROM(const std::string&, Word);
+        bool loadROM(const std::string&, Word, bool reset = true);
 
         /*!
         \brief Outputs some info in a string
         */
         std::string getInfo() const;
+
+        /*!
+        \brief Returns a pointer to the start of VRAM
+        */
+        const Byte* getVRAM() const;
 
     private:
 
@@ -120,12 +125,12 @@ namespace I8080
 
         struct
         {            
-            Byte s       : 1; //sign flag
-            Byte z       : 1; //zero flag
-            Byte ac      : 1; //aux carry flag
-            Byte p       : 1; //parity flag
-            Byte cy      : 1; //carry flag
-            Byte padding : 3;
+            Byte s;//      : 1; //sign flag
+            Byte z;//      : 1; //zero flag
+            Byte ac;//     : 1; //aux carry flag
+            Byte p;//       : 1; //parity flag
+            Byte cy;//      : 1; //carry flag
+            //Byte padding : 3;
             Byte psw     = 0;         //processor status word
         }m_flags;
 

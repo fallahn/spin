@@ -21,38 +21,34 @@ and must not be misrepresented as being the original software.
 source distribution.
 *********************************************************************/
 
-#ifndef SP_MACHIINE_HPP_
-#define SP_MACHINE_HPP_
+#ifndef SP_DISPLAY_HPP_
+#define SP_DISPLAY_HPP_
 
-#include <SFML/Graphics/RenderWindow.hpp>
-#include <SFML/Graphics/Text.hpp>
-#include <SFML/Graphics/Font.hpp>
+#include <SFML/Graphics/Texture.hpp>
+#include <SFML/Graphics/Sprite.hpp>
+#include <SFML/Graphics/Drawable.hpp>
+#include <SFML/Graphics/Transformable.hpp>
 
-#include <I8080/I8080.hpp>
-#include <Display.hpp>
+#include <array>
 
-class Machine final
+class Display final : public sf::Drawable, public sf::Transformable
 {
 public:
-    Machine();
-    ~Machine() = default;
-    Machine(const Machine&) = delete;
-    Machine& operator = (const Machine&) = delete;
+    Display();
+    ~Display() = default;
 
-    void run();
+    Display(const Display&) = delete;
+    Display& operator = (const Display&) = delete;
+
+    void updateBuffer(const std::uint8_t*);
 
 private:
-    sf::RenderWindow m_renderWindow;
+    sf::Texture m_texture;
+    sf::Sprite m_sprite;
 
-    I8080::CPU m_processor;
+    std::array<std::uint8_t, 256 * 244 * 4> m_buffer; //using RGBA texture in SFML so w x h x bpp
 
-    sf::Text m_infoText;
-    sf::Font m_font;
-
-    Display m_display;
-
-    void update(float dt);
-    void draw();
+    void draw(sf::RenderTarget&, sf::RenderStates) const override;
 };
 
-#endif //SP_MACHINE_HPP_
+#endif //SP_DISPLAY_HPP_

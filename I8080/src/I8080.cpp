@@ -25,6 +25,9 @@ source distribution.
 
 #include <cstring>
 #include <cassert>
+#include <fstream>
+#include <iostream>
+#include <sstream>
 
 //this hides some of the horrors of using pointer to member functions
 #define EXEC_OPCODE(opcode) ((*this).*(m_opcodes[opcode]))()
@@ -36,23 +39,25 @@ namespace
     //maps number of I8080 cycles take by each opcode
     const std::array<Byte, 256> opCycles = 
     {
-        4,  10, 7,  5,  5,  5,  7,  4,  0,  10, 7,  5,  5,  5,  7,  4,
-        0,  10, 7,  5,  5,  5,  7,  4,  0,  10, 7,  5,  5,  5,  7,  4,
-        0,  10, 16, 5,  5,  5,  7,  4,  0,  10, 7,  5,  5,  5,  7,  11,
-        0,  10, 13, 0,  5,  5,  7,  0,  0,  10, 13, 5,  5,  5,  7,  0,
-        5,  5,  5,  5,  5,  5,  5,  4,  5,  5,  5,  5,  5,  5,  5,  11,
-        5,  5,  5,  5,  5,  5,  5,  5,  5,  5,  5,  5,  5,  5,  5,  5,
-        5,  5,  5,  5,  5,  5,  5,  5,  5,  5,  5,  5,  5,  5,  5,  5,
-        5,  5,  5,  5,  5,  5,  7,  5,  5,  5,  5,  5,  5,  5,  5,  5,
-        4,  4,  4,  4,  4,  4,  4,  4,  4,  4,  4,  4,  4,  4,  4,  4,
-        4,  4,  4,  4,  4,  4,  4,  4,  4,  4,  4,  4,  4,  4,  4,  4,
-        4,  4,  4,  4,  4,  4,  4,  4,  4,  4,  4,  4,  4,  4,  4,  4,
-        4,  4,  4,  4,  4,  4,  4,  4,  4,  4,  4,  4,  4,  4,  4,  4,
-        5,  10, 10, 10, 11, 11, 0,  11, 11, 10, 0,  10, 11, 17, 7,  11,
-        5,  10, 10, 10, 11, 11, 7,  11, 11, 0,  10, 10, 11, 0,  7,  11,
-        11, 10, 10, 18, 11, 11, 7,  11, 11, 5,  10, 4,  11, 0,  7,  11,
-        11, 10, 10, 4,  11, 11, 7,  11, 11, 5,  10, 4,  11, 0,  7,  11
+        4,  10, 7,  5,  5,  5,  7,  4,  4 , 10, 7,  5,  5,  5,  7,  4,
+        4,  10, 7,  5,  5,  5,  7,  4,  4,  10, 7,  5,  5,  5,  7,  4, 
+        4,  10, 16, 5,  5,  5,  7,  4,  4,  10, 16, 5,  5,  5,  7,  4,
+        4,  10, 13, 5,  10, 10, 10, 4,  4,  10, 13, 5,  5,  5,  7,  4,
+        5,  5,  5,  5,  5,  5,  7,  5,  5,  5,  5,  5,  5,  5,  7,  5,
+        5,  5,  5,  5,  5,  5,  7,  5,  5,  5,  5,  5,  5,  5,  7,  5,
+        5,  5,  5,  5,  5,  5,  7,  5,  5,  5,  5,  5,  5,  5,  7,  5,
+        7,  7,  7,  7,  7,  7,  7,  7,  5,  5,  5,  5,  5,  5,  7,  5,
+        4,  4,  4,  4,  4,  4,  7,  4,  4,  4,  4,  4,  4,  4,  7,  4,
+        4,  4,  4,  4,  4,  4,  7,  4,  4,  4,  4,  4,  4,  4,  7,  4,
+        4,  4,  4,  4,  4,  4,  7,  4,  4,  4,  4,  4,  4,  4,  7,  4,
+        4,  4,  4,  4,  4,  4,  7,  4,  4,  4,  4,  4,  4,  4,  7,  4,
+        11, 10, 10, 10, 17, 11, 7,  11, 11, 10, 10, 10, 10, 17, 7,  11,
+        11, 10, 10, 10, 17, 11, 7,  11, 11, 10, 10, 10, 10, 17, 7,  11,
+        11, 10, 10, 18, 17, 11, 7,  11, 11, 5,  10, 5,  17, 17, 7,  11,
+        11, 10, 10, 4,  17, 11, 7,  11, 11, 5,  10, 4,  17, 17, 7,  11
     };
+
+    const Word VRAM_OFFSET = 0x2400;
 }
 
 CPU::Registers::Registers()
@@ -91,7 +96,8 @@ CPU::CPU()
     m_flags.cy = 0;
 
     std::memset(m_memory.data(), 0, MEM_SIZE);
-    m_memory[1] = 0xC3; //jumps to zero in inf loop by default
+    m_memory[0x1FFF] = 0xC3; //jumps to zero in inf loop by default
+    //std::memset(&m_memory[VRAM_OFFSET], 0xFF, 7168);
     std::memset(m_ports.data(), 0, sizeof(Word) * PORT_COUNT);
 
     //opcode pointer table - EEEEE these should all be static :S
@@ -143,8 +149,14 @@ void CPU::reset()
     m_flags.cy = 0;
 
     std::memset(m_memory.data(), 0, MEM_SIZE);
-    m_memory[1] = 0xC3; //jumps to zero in inf loop by default
+    m_memory[0x1FFF] = 0xC3; //jumps to zero in inf loop by default
+    std::memset(&m_memory[VRAM_OFFSET], 0xFF, 7168);
     std::memset(m_ports.data(), 0, sizeof(Word) * PORT_COUNT);
+}
+
+namespace
+{
+    std::uint32_t totalCycles = 0;
 }
 
 void CPU::update(std::int32_t count)
@@ -160,6 +172,8 @@ void CPU::update(std::int32_t count)
         m_currentOpcode = m_memory[m_registers.programCounter];
         EXEC_OPCODE(m_currentOpcode);
         m_cycleCount -= opCycles[m_currentOpcode];
+        m_registers.programCounter = m_registers.programCounter % 0x23FF;
+        totalCycles += opCycles[m_currentOpcode];
     }
 }
 
@@ -184,19 +198,62 @@ void CPU::raiseInterrupt(Byte id)
     }
 }
 
-bool CPU::loadROM(const std::string& path, Word address)
+bool CPU::loadROM(const std::string& path, Word address, bool rst)
 {
+    if (rst) reset(); //ROMs might be multiple parts
+
+    std::ifstream file(path, std::ios::in | std::ios::binary);
+    if (file.fail() || !file.good())
+    {
+        file.close();
+        std::cout << "Failed opening file " << path << std::endl;
+        return false;
+    }
+
+    file.seekg(0, file.end);
+    auto size = file.tellg();
+    file.seekg(0, file.beg);
+
+    if (size > 0 && size < (m_memory.size() - address)) //TODO this doesn't accoutn for stack space...
+    {
+        file.read((char*)&m_memory[address], size);
+        return true;
+    }
+    std::cout << "Invalid file size... " << path << std::endl;
     return false;
 }
 
 std::string CPU::getInfo() const
 {
-    std::string str
-    (
-        "Program Counter: " + std::to_string(m_registers.programCounter) +
-        "\nCurrent Opcode: " + std::to_string(m_currentOpcode) 
-    );
-    return std::move(str);
+    //std::string str
+    //(
+    //    "Program Counter: " + std::to_string(m_registers.programCounter) +
+    //    "\nCurrent Opcode: " + std::to_string(m_currentOpcode) 
+    //);
+    //return std::move(str);
+    std::stringstream ss;
+    ss << "A: " << std::hex << (int)m_registers.A << std::endl;
+    ss << "BC: " << m_registers.BC << std::endl;
+    ss << "DE: " << m_registers.DE << std::endl;
+    ss << "HL: " << m_registers.HL << std::endl;
+    ss << "PC: " << m_registers.programCounter << std::endl;
+    ss << "SP: " << m_registers.stackPointer << std::endl;
+    ss << "OP: " << (int)m_currentOpcode << std::endl;
+    ss << "Cycles: " << std::dec << totalCycles << std::endl;
+    ss << "Flags: ";
+    (m_flags.ac) ? ss << "AC, " : ss << ".";
+    (m_flags.cy) ? ss << "CY, " : ss << ".";
+    (m_flags.p) ? ss << "P, " : ss << ".";
+    (m_flags.s) ? ss << "S, " : ss << ".";
+    (m_flags.z) ? ss << "Z" : ss << ".";
+    ss << std::endl;
+
+    return ss.str();
+}
+
+const Byte* CPU::getVRAM() const
+{
+    return &m_memory[VRAM_OFFSET];
 }
 
 //private
@@ -209,7 +266,7 @@ void CPU::pushWord(Word word)
 
 Word CPU::popWord()
 {
-    auto word = (m_memory[m_registers.stackPointer] << 8) | m_memory[m_registers.stackPointer];
+    auto word = (m_memory[m_registers.stackPointer + 1] << 8) | m_memory[m_registers.stackPointer];
     m_registers.stackPointer += 2;
     return word;
 }
