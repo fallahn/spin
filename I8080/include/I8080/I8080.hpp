@@ -125,14 +125,14 @@ namespace I8080
 
         struct
         {            
-            Byte cy     : 1; //carry flag
-            Byte pad1   : 1;
-            Byte p      : 1; //parity flag
-            Byte pad2   : 1;
-            Byte ac     : 1; //aux carry flag
-            Byte pad3   : 1;
-            Byte z      : 1; //zero flag
-            Byte s      : 1; //sign flag
+            Byte cy;// : 1; //carry flag
+            //Byte pad1   : 1;
+            Byte p;// : 1; //parity flag
+            //Byte pad2   : 1;
+            Byte ac;// : 1; //aux carry flag
+            //Byte pad3   : 1;
+            Byte z;// : 1; //zero flag
+            Byte s;// : 1; //sign flag
             Byte psw    = 0; //processor status word
         }m_flags;
 
@@ -147,7 +147,6 @@ namespace I8080
         Byte m_shiftByte1;
         Byte m_shiftOffset;
 
-        bool m_stopped;
         bool m_interruptEnabled;
         Byte m_interruptPending; //flags of interrupt IDs
 
@@ -165,6 +164,12 @@ namespace I8080
 #define OP_INCLUDE
 #include <I8080/Opcodes.hpp>
 #undef OP_INCLUDE
+
+        //unit tests for opcodes
+#ifdef OP_TEST
+#include <I8080/OpTests.hpp>
+#endif // OP_TEST
+
     };
 }
 #endif //I8080_HPP_

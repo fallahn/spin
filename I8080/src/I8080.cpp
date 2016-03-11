@@ -37,6 +37,7 @@ using namespace I8080;
 namespace
 {
     //maps number of I8080 cycles take by each opcode
+    //these seem to vary depending on hardware info source...
     const std::array<Byte, 256> opCycles = 
     {
         4,  10, 7,  5,  5,  5,  7,  4,  4 , 10, 7,  5,  5,  5,  7,  4,
@@ -78,7 +79,6 @@ CPU::CPU()
     m_shiftByte0        (0),
     m_shiftByte1        (0),
     m_shiftOffset       (0),
-    m_stopped           (false),
     m_interruptEnabled  (false),
     m_interruptPending  (0)
 {
@@ -97,7 +97,6 @@ CPU::CPU()
 
     std::memset(m_memory.data(), 0, MEM_SIZE);
     m_memory[0x1FFF] = 0xC3; //jumps to zero in inf loop by default
-    //std::memset(&m_memory[VRAM_OFFSET], 0xFF, 7168);
     std::memset(m_ports.data(), 0, sizeof(Word) * PORT_COUNT);
 
     //opcode pointer table - EEEEE these should all be static :S
@@ -120,6 +119,12 @@ CPU::CPU()
         &CPU::rpo,     &CPU::poph,    &CPU::jpo,     &CPU::xthl,    &CPU::cpo,     &CPU::pushh,   &CPU::ani,     &CPU::rst4,    &CPU::cpe,     &CPU::pchl,    &CPU::jpe,     &CPU::xchg,    &CPU::cpe,     &CPU::notImpl, &CPU::xri,     &CPU::rst5,
         &CPU::cp,      &CPU::poppsw,  &CPU::jp,      &CPU::di,      &CPU::cp,      &CPU::pushpsw, &CPU::ori,     &CPU::rst6,    &CPU::rm,      &CPU::sphl,    &CPU::jm,      &CPU::ei,      &CPU::cm,      &CPU::notImpl, &CPU::cpi,     &CPU::rst7
     };
+
+#ifdef OP_TEST
+    runTests();
+    reset();
+#undef OP_TEST
+#endif //OP_TEST
 }
 
 //public
@@ -130,7 +135,6 @@ void CPU::reset()
     m_shiftByte0 = 0;
     m_shiftByte1 = 0;
     m_shiftOffset = 0;
-    m_stopped = false;
     m_interruptEnabled = false;
     m_interruptPending = 0;
 
@@ -150,7 +154,6 @@ void CPU::reset()
 
     std::memset(m_memory.data(), 0, MEM_SIZE);
     m_memory[0x1FFF] = 0xC3; //jumps to zero in inf loop by default
-    std::memset(&m_memory[VRAM_OFFSET], 0xFF, 7168);
     std::memset(m_ports.data(), 0, sizeof(Word) * PORT_COUNT);
 }
 
@@ -241,10 +244,10 @@ std::string CPU::getInfo() const
     ss << "OP: " << (int)m_currentOpcode << std::endl;
     ss << "Cycles: " << std::dec << totalCycles << std::endl;
     ss << "Flags: ";
-    (m_flags.ac) ? ss << "AC, " : ss << ".";
-    (m_flags.cy) ? ss << "CY, " : ss << ".";
-    (m_flags.p) ? ss << "P, " : ss << ".";
-    (m_flags.s) ? ss << "S, " : ss << ".";
+    (m_flags.ac) ? ss << "AC," : ss << ".";
+    (m_flags.cy) ? ss << "CY," : ss << ".";
+    (m_flags.p) ? ss << "P," : ss << ".";
+    (m_flags.s) ? ss << "S," : ss << ".";
     (m_flags.z) ? ss << "Z" : ss << ".";
     ss << std::endl;
 
