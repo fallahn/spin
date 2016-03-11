@@ -28,6 +28,7 @@ source distribution.
 #include <SFML/Graphics/Vertex.hpp>
 #include <SFML/Graphics/Drawable.hpp>
 #include <SFML/Graphics/Transformable.hpp>
+#include <SFML/Graphics/Shader.hpp>
 
 #include <array>
 
@@ -46,6 +47,7 @@ private:
     sf::Texture m_baseTexture;
     sf::Texture m_overlayTexture;
     std::array<sf::Vertex, 4u> m_vertexArray;
+    sf::Shader m_shader;
 
     std::array<std::uint8_t, 256 * 244 * 4> m_buffer; //using RGBA texture in SFML so w x h x bpp
 

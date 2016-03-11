@@ -36,6 +36,16 @@ namespace
 {
     const sf::Uint32 width = 256u;
     const sf::Uint32 height = 224u;
+
+    const std::string shader =
+        "#version 120\n"
+        "uniform sampler2D u_baseTexture;\n"
+        "uniform sampler2D u_overlayTexture;\n"
+        "void main()\n"
+        "{\n"
+        "  vec4 baseColour = texture2D(u_baseTexture, gl_TexCoord[0].xy);"
+        "  gl_FragColor = texture2D(u_overlayTexture, gl_TexCoord[0].xy) * baseColour;\n"
+        "}\n";
 }
 
 Display::Display()
@@ -45,7 +55,7 @@ Display::Display()
     m_baseTexture.loadFromImage(img);
 
     setOrigin(width / 2.f, height / 2.f);
-    //setScale(2.f, 2.f);
+    setScale(2.f, 2.f);
     setRotation(-90.f);
 
     std::memset(m_buffer.data(), 255, m_buffer.size());
@@ -60,27 +70,30 @@ Display::Display()
     //ok so SFML forces us to use RGBA textures (ideally we'd want GL_LUMINENCE or so)
     //but because we're emulating we'll "emulate" the original overlay with a custom
     //texture and then multiply it (with a shader for performance)
-    std::array<sf::Uint8, width * height * 4> overlayData;
-    std::memset(overlayData.data(), 0xFF, overlayData.size());
+    img.create(width, height, sf::Color::White);
 
     std::function<void(std::uint16_t, std::uint16_t, std::uint16_t, std::uint16_t, sf::Color)> updateColour =
-        [&overlayData](std::uint16_t x , std::uint16_t y, std::uint16_t w, std::uint16_t h, sf::Color c)
+        [&img](std::uint16_t x , std::uint16_t y, std::uint16_t w, std::uint16_t h, sf::Color c)
     {
         for (auto j = y; j < y + h; ++j)
         {
             for (auto i = x; i < x + w; ++i)
             {
-                auto idx = j * width + i * 4;
-                overlayData[idx++] = c.r;
-                overlayData[idx++] = c.g;
-                overlayData[idx] = c.b;
+                img.setPixel(i, j, c);
             }
         }
     };
 
-    updateColour(0, 0, width, height, sf::Color::Magenta);
+    updateColour(222, 0, 34, 224, sf::Color::Yellow);
+    updateColour(208, 0, 12, 224, sf::Color::Red);
+    updateColour(18, 0, 56, 224, sf::Color::Green);
+    updateColour(0, 0, 16, 136, sf::Color::Green);
 
-    m_overlayTexture.loadFromMemory(overlayData.data(), overlayData.size());
+    m_overlayTexture.loadFromImage(img);
+
+    m_shader.loadFromMemory(shader, sf::Shader::Fragment);
+    m_shader.setParameter("u_baseTexture", m_baseTexture);
+    m_shader.setParameter("u_overlayTexture", m_overlayTexture);
 }
 
 //public 
@@ -110,6 +123,7 @@ void Display::updateBuffer(const std::uint8_t* buffer)
 void Display::draw(sf::RenderTarget& rt, sf::RenderStates states) const
 {
     states.transform *= getTransform();
-    states.texture = &m_overlayTexture;
+    states.texture = &m_baseTexture;
+    states.shader = &m_shader;
     rt.draw(m_vertexArray.data(), m_vertexArray.size(), sf::Quads, states);
 }
