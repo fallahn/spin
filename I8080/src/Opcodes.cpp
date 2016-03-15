@@ -1757,7 +1757,7 @@ void CPU::in()
     case 3:
     {
         Word v = (m_shiftByte1 << 8) | m_shiftByte0;
-        m_registers.A = ((v >> (8 - m_shiftOffset)) & 0xff);
+        m_registers.A = ((v >> (8 - m_shiftOffset)) & 0xFF);
     }
     break;
     }

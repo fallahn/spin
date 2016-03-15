@@ -21,7 +21,7 @@ and must not be misrepresented as being the original software.
 source distribution.
 *********************************************************************/
 
-#ifdef OP_TESTS
+#ifdef OP_TEST
 
 #include <I8080/I8080.hpp>
 

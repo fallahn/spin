@@ -41,10 +41,14 @@ namespace
         "#version 120\n"
         "uniform sampler2D u_baseTexture;\n"
         "uniform sampler2D u_overlayTexture;\n"
+        "uniform sampler2D u_backgroundTexture;\n"
         "void main()\n"
         "{\n"
-        "  vec4 baseColour = texture2D(u_baseTexture, gl_TexCoord[0].xy);"
-        "  gl_FragColor = texture2D(u_overlayTexture, gl_TexCoord[0].xy) * baseColour;\n"
+        "  vec4 baseColour = texture2D(u_baseTexture, gl_TexCoord[0].xy);\n"
+        "  baseColour.a = 0.5;\n"
+        "  vec4 overlayColour = texture2D(u_overlayTexture, gl_TexCoord[0].xy);\n"
+        "  vec4 backgroundColour = texture2D(u_backgroundTexture, gl_TexCoord[0].xy);\n"
+        "  gl_FragColor = (baseColour * overlayColour) + (backgroundColour * 2.0);\n"
         "}\n";
 }
 
@@ -94,6 +98,9 @@ Display::Display()
     m_shader.loadFromMemory(shader, sf::Shader::Fragment);
     m_shader.setParameter("u_baseTexture", m_baseTexture);
     m_shader.setParameter("u_overlayTexture", m_overlayTexture);
+
+    m_backgroundTexture.loadFromFile("assets/images/background.png");
+    m_shader.setParameter("u_backgroundTexture", m_backgroundTexture);
 }
 
 //public 
