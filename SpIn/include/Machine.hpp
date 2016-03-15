@@ -52,6 +52,7 @@ private:
     Display m_display;
 
     void update(float dt);
+    void handleEvent(const sf::Event&);
     void draw();
 };
 

@@ -77,6 +77,16 @@ namespace I8080
         */
         const Byte* getVRAM() const;
 
+        /*!
+        \brief Sets given flag on given port
+        */
+        void setFlag(std::size_t, std::uint8_t);
+
+        /*!
+        \brief Unsets given flag on fiven port
+        */
+        void unsetFlag(std::size_t, std::uint8_t);
+
     private:
 
         using Opcode = void (CPU::*)();
@@ -125,14 +135,14 @@ namespace I8080
 
         struct
         {            
-            Byte cy : 1; //carry flag
+            Byte cy     : 1; //carry flag
             Byte pad1   : 1;
-            Byte p : 1; //parity flag
+            Byte p      : 1; //parity flag
             Byte pad2   : 1;
-            Byte ac : 1; //aux carry flag
+            Byte ac     : 1; //aux carry flag
             Byte pad3   : 1;
-            Byte z : 1; //zero flag
-            Byte s : 1; //sign flag
+            Byte z      : 1; //zero flag
+            Byte s      : 1; //sign flag
             Byte psw    = 0; //processor status word
         }m_flags;
 
@@ -141,7 +151,7 @@ namespace I8080
         Byte m_currentOpcode;
         std::array<Byte, MEM_SIZE> m_memory;
 
-        std::array<Word, PORT_COUNT> m_ports;
+        std::array<Byte, PORT_COUNT> m_ports;
 
         Byte m_shiftByte0;
         Byte m_shiftByte1;

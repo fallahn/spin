@@ -45,7 +45,6 @@ void Machine::run()
     m_processor.loadROM("assets/roms/invaders.g", 0x0800, false);
     m_processor.loadROM("assets/roms/invaders.f", 0x1000, false);
     m_processor.loadROM("assets/roms/invaders.e", 0x1800, false);
-    //m_processor.loadROM("assets/roms/cpudiag.bin", 0x0100);
 
     m_renderWindow.create({ 800, 600 }, "SpIn");
     m_renderWindow.setFramerateLimit(120);
@@ -61,28 +60,7 @@ void Machine::run()
             {
                 m_renderWindow.close();
             }
-            else if (evt.type == sf::Event::KeyReleased)
-            {
-                switch (evt.key.code)
-                {
-                default:break;
-                case sf::Keyboard::Escape:
-                    m_renderWindow.close();
-                    break;
-                case sf::Keyboard::Space:
-                    m_processor.update(1);
-                    break;
-                case sf::Keyboard::Z:
-                    m_processor.update(500);
-                    break;
-                case sf::Keyboard::X:
-                    m_processor.update(1000);
-                    break;
-                case sf::Keyboard::C:
-                    m_processor.update(5000);
-                    break;
-                }
-            }
+            handleEvent(evt);
         }
 
         static const float timestep = 1.f / 60.f;
@@ -109,9 +87,110 @@ void Machine::update(float dt)
     m_processor.update(17000);
     m_processor.raiseInterrupt(2);
 
-
     m_display.updateBuffer(m_processor.getVRAM());
     m_infoText.setString(m_processor.getInfo());
+}
+
+void Machine::handleEvent(const sf::Event& evt)
+{
+    if (evt.type == sf::Event::KeyPressed)
+    {
+        switch (evt.key.code)
+        {
+        default: break;
+        case sf::Keyboard::Num0:
+            //coin insert
+            m_processor.setFlag(1, 0);
+            break;
+        case sf::Keyboard::Num1:
+            //player 2 start
+            m_processor.setFlag(1, 2);
+            break;
+        case sf::Keyboard::Num2:
+            //player 1 start
+            m_processor.setFlag(1, 1);
+            break;
+        case sf::Keyboard::Space:
+            //player 1 shoot
+            m_processor.setFlag(1, 4);
+            break;
+        case sf::Keyboard::A:
+            //player 1 left
+            m_processor.setFlag(1, 5);
+            break;
+        case sf::Keyboard::D:
+            //player 1 right
+            m_processor.setFlag(1, 6);
+            break;
+        case sf::Keyboard::LControl:
+            //player 2 shoot
+            m_processor.setFlag(2, 4);
+            break;
+        case sf::Keyboard::Left:
+            //player 2 left
+            m_processor.setFlag(2, 5);
+            break;
+        case sf::Keyboard::Right:
+            //player 2 right
+            m_processor.setFlag(2, 6);
+            break;
+        }
+    }
+    else if (evt.type == sf::Event::KeyReleased)
+    {
+        switch (evt.key.code)
+        {
+        default:break;
+        case sf::Keyboard::Escape:
+            m_renderWindow.close();
+            break;
+            /*case sf::Keyboard::Space:
+            m_processor.update(1);
+            break;
+            case sf::Keyboard::Z:
+            m_processor.update(500);
+            break;
+            case sf::Keyboard::X:
+            m_processor.update(1000);
+            break;
+            case sf::Keyboard::C:
+            m_processor.update(5000);
+            break;*/
+        case sf::Keyboard::Num0:
+            m_processor.unsetFlag(1, 0);
+            break;
+        case sf::Keyboard::Num1:
+            m_processor.unsetFlag(1, 2);
+            break;
+        case sf::Keyboard::Num2:
+            m_processor.unsetFlag(1, 1);
+            break;
+        case sf::Keyboard::Space:
+            //player 1 shoot
+            m_processor.unsetFlag(1, 4);
+            break;
+        case sf::Keyboard::A:
+            //player 1 left
+            m_processor.unsetFlag(1, 5);
+            break;
+        case sf::Keyboard::D:
+            //player 1 right
+            m_processor.unsetFlag(1, 6);
+            break;
+        case sf::Keyboard::LControl:
+            //player 2 shoot
+            m_processor.unsetFlag(2, 4);
+            break;
+        case sf::Keyboard::Left:
+            //player 2 left
+            m_processor.unsetFlag(2, 5);
+            break;
+        case sf::Keyboard::Right:
+            //player 2 right
+            m_processor.unsetFlag(2, 6);
+            break;
+        }
+    }
 }
 
 void Machine::draw()

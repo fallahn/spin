@@ -97,7 +97,7 @@ CPU::CPU()
 
     std::memset(m_memory.data(), 0, MEM_SIZE);
     m_memory[0x1FFF] = 0xC3; //jumps to zero in inf loop by default
-    std::memset(m_ports.data(), 0, sizeof(Word) * PORT_COUNT);
+    std::memset(m_ports.data(), 0, PORT_COUNT);
 
     //opcode pointer table - EEEEE these should all be static :S
     m_opcodes =
@@ -154,7 +154,7 @@ void CPU::reset()
 
     std::memset(m_memory.data(), 0, MEM_SIZE);
     m_memory[0x1FFF] = 0xC3; //jumps to zero in inf loop by default
-    std::memset(m_ports.data(), 0, sizeof(Word) * PORT_COUNT);
+    std::memset(m_ports.data(), 0, PORT_COUNT);
 }
 
 namespace
@@ -257,6 +257,18 @@ std::string CPU::getInfo() const
 const Byte* CPU::getVRAM() const
 {
     return &m_memory[VRAM_OFFSET];
+}
+
+void CPU::setFlag(std::size_t port, std::uint8_t flag)
+{
+    assert(port < m_ports.size() && flag < 8);
+    m_ports[port] |= (1 << flag);
+}
+
+void CPU::unsetFlag(std::size_t port, std::uint8_t flag)
+{
+    assert(port < m_ports.size() && flag < 8);
+    m_ports[port] &= ~(1 << flag);
 }
 
 //private
