@@ -21,6 +21,8 @@ and must not be misrepresented as being the original software.
 source distribution.
 *********************************************************************/
 
+#ifdef OP_TESTS
+
 #include <I8080/I8080.hpp>
 
 #include <iostream>
@@ -1982,3 +1984,5 @@ void CPU::testPOPPSW()
         std::cout << "POPPPSW test passed!" << std::endl;
     }
 }
+
+#endif //OP_TESTS
