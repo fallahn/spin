@@ -30,11 +30,16 @@ using namespace I8080;
 void CPU::setParity(std::int16_t value)
 {
     Byte byte = 0;
-    for (auto i = 0; i < 8; ++i)
+
+    value = (value & (1 << 16) - 1);
+    for (auto i = 0; i < 16; ++i)
     {
-        byte += ((0x80 >> i) & value);
+        if (value & 0x1) byte++;
+
+        value >>= 1;
     }
-    m_flags.p = !(byte % 2);
+
+    m_flags.p = !(byte & 0x1);
 }
 
 void CPU::setPSW()
@@ -48,11 +53,11 @@ void CPU::setPSW()
 
 void CPU::getFlagsFromPSW()
 {
-    m_flags.s = (m_flags.psw & 0x80);
-    m_flags.z = (m_flags.psw & 0x40);
-    m_flags.ac = (m_flags.psw & 0x10);
-    m_flags.p = (m_flags.psw & 0x04);
-    m_flags.cy = (m_flags.psw & 0x01);
+    m_flags.s = (m_flags.psw & 0x80) ? 1 : 0;
+    m_flags.z = (m_flags.psw & 0x40) ? 1 : 0;
+    m_flags.ac = (m_flags.psw & 0x10) ? 1 : 0;
+    m_flags.p = (m_flags.psw & 0x04) ? 1 : 0;
+    m_flags.cy = (m_flags.psw & 0x01) ? 1 : 0;
 }
 
 void CPU::notImpl()
@@ -857,7 +862,7 @@ void CPU::hlt()
 //----increment/decrement instructions----//
 void CPU::inc8(std::int16_t result, std::uint8_t reg)
 {
-    //m_flags.ac = ((reg & 0xF) > (result & 0xF));
+    m_flags.ac = ((reg & 0xF) > (result & 0xF));
     m_flags.s = result >> 7;
     m_flags.z = !(result);
     setParity(result);
@@ -1623,8 +1628,9 @@ void CPU::rm()
 //RST
 void CPU::rst()
 {
-    m_memory[m_registers.stackPointer] = m_registers.programCounter;
     m_registers.stackPointer -= 2;
+    m_memory[m_registers.stackPointer] = m_registers.programCounter & 0x00FF;
+    m_memory[m_registers.stackPointer + 1] = ((m_registers.programCounter >> 8) & 0xFF);
 }
 //0xC7
 void CPU::rst0()
@@ -1699,8 +1705,8 @@ void CPU::pushh()
 void CPU::pushpsw()
 {
     setPSW();
-    m_memory[m_registers.stackPointer - 1] = m_flags.psw;
-    m_memory[m_registers.stackPointer - 2] = m_registers.A;
+    m_memory[m_registers.stackPointer - 2] = m_flags.psw;
+    m_memory[m_registers.stackPointer - 1] = m_registers.A;
     m_registers.stackPointer -= 2;
     m_registers.programCounter++;
 }
@@ -1725,8 +1731,8 @@ void CPU::poph()
 //0xF1
 void CPU::poppsw()
 {
-    m_registers.A = m_memory[m_registers.stackPointer];
-    m_flags.psw = m_memory[m_registers.stackPointer + 1];
+    m_registers.A = m_memory[m_registers.stackPointer + 1];
+    m_flags.psw = m_memory[m_registers.stackPointer];
     m_registers.stackPointer += 2;
     getFlagsFromPSW();
     m_registers.programCounter++;
@@ -1769,7 +1775,7 @@ void CPU::mvic()
 void CPU::mvid()
 {
     m_registers.D = m_memory[m_registers.programCounter + 1];
-    m_registers.programCounter++;
+    m_registers.programCounter += 2;
 }
 //0x1E
 void CPU::mvie()

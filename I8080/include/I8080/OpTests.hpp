@@ -123,6 +123,59 @@ void testCP();
 //
 void testCM();
 
+//
+void testRET();
+//
+void testRNZ();
+//
+void testRZ();
+//
+void testRNC();
+//
+void testRC();
+//
+void testRPO();
+//
+void testRPE();
+//
+void testRP();
+//
+void testRM();
+
+//
+void testRST0();
+//
+void testRST1();
+//
+void testRST2();
+//
+void testRST3();
+//
+void testRST4();
+//
+void testRST5();
+//
+void testRST6();
+//
+void testRST7();
+
+
+//
+void testPUSHB();
+//
+void testPUSHD();
+//
+void testPUSHH();
+//
+void testPUSHPSW();
+//
+void testPOPB();
+//
+void testPOPD();
+//
+void testPOPH();
+//
+void testPOPPSW();
 
 void runTests()
 {
@@ -177,6 +230,34 @@ void runTests()
     testCPE();
     testCP();
     testCM();
+
+    testRET();
+    testRNZ();
+    testRZ();
+    testRNC();
+    testRC();
+    testRPO();
+    testRPE();
+    testRP();
+    testRM();
+
+    testRST0();
+    testRST1();
+    testRST2();
+    testRST3();
+    testRST4();
+    testRST5();
+    testRST6();
+    testRST7();
+
+    testPUSHB();
+    testPUSHD();
+    testPUSHH();
+    testPUSHPSW();
+    testPOPB();
+    testPOPD();
+    testPOPH();
+    testPOPPSW();
 }
 
 #endif //OP_TEST

@@ -125,14 +125,14 @@ namespace I8080
 
         struct
         {            
-            Byte cy;// : 1; //carry flag
-            //Byte pad1   : 1;
-            Byte p;// : 1; //parity flag
-            //Byte pad2   : 1;
-            Byte ac;// : 1; //aux carry flag
-            //Byte pad3   : 1;
-            Byte z;// : 1; //zero flag
-            Byte s;// : 1; //sign flag
+            Byte cy : 1; //carry flag
+            Byte pad1   : 1;
+            Byte p : 1; //parity flag
+            Byte pad2   : 1;
+            Byte ac : 1; //aux carry flag
+            Byte pad3   : 1;
+            Byte z : 1; //zero flag
+            Byte s : 1; //sign flag
             Byte psw    = 0; //processor status word
         }m_flags;
 

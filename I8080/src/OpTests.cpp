@@ -967,10 +967,1018 @@ void CPU::testCALL()
     }
     else if (m_memory[m_registers.stackPointer] != 3)
     {
-        std::cout << "CALL test failed: stack return valkue incorrect" << std::endl;
+        std::cout << "CALL test failed: stack return value incorrect" << std::endl;
     }
     else
     {
         std::cout << "CALL test passed!" << std::endl;
+    }
+}
+void CPU::testCNZ()
+{
+    m_registers.stackPointer = 0xFFFF;
+    m_registers.programCounter = 0;
+    m_memory[4] = 0x10;
+    m_memory[5] = 0x20;
+    m_flags.z = 1;
+
+    cnz();
+
+    if (m_registers.programCounter != 3)
+    {
+        std::cout << "CNZ test failed: program counter incorrect" << std::endl;
+        return;
+    }
+
+    m_flags.z = 0;
+
+    cnz();
+    if (m_registers.programCounter != 0x2010)
+    {
+        std::cout << "CNZ test failed: program counter incorrect" << std::endl;
+    }
+    else if (m_registers.stackPointer != 0xFFFD)
+    {
+        std::cout << "CNZ test failed: stack pointer value incorrect" << std::endl;
+    }
+    else if (m_memory[m_registers.stackPointer] != 6)
+    {
+        std::cout << "CNZ test failed: stack return value incorrect" << std::endl;
+    }
+    else
+    {
+        std::cout << "CNZ test passed!" << std::endl;
+    }
+}
+void CPU::testCZ()
+{
+    m_registers.stackPointer = 0xFFFF;
+    m_registers.programCounter = 0;
+    m_memory[4] = 0x10;
+    m_memory[5] = 0x20;
+    m_flags.z = 0;
+
+    cz();
+
+    if (m_registers.programCounter != 3)
+    {
+        std::cout << "CZ test failed: program counter incorrect" << std::endl;
+        return;
+    }
+
+    m_flags.z = 1;
+
+    cz();
+    if (m_registers.programCounter != 0x2010)
+    {
+        std::cout << "CZ test failed: program counter incorrect" << std::endl;
+    }
+    else if (m_registers.stackPointer != 0xFFFD)
+    {
+        std::cout << "CZ test failed: stack pointer value incorrect" << std::endl;
+    }
+    else if (m_memory[m_registers.stackPointer] != 6)
+    {
+        std::cout << "CZ test failed: stack return value incorrect" << std::endl;
+    }
+    else
+    {
+        std::cout << "CZ test passed!" << std::endl;
+    }
+}
+void CPU::testCNC()
+{
+    m_registers.stackPointer = 0xFFFF;
+    m_registers.programCounter = 0;
+    m_memory[4] = 0x10;
+    m_memory[5] = 0x20;
+    m_flags.cy = 1;
+
+    cnc();
+
+    if (m_registers.programCounter != 3)
+    {
+        std::cout << "CNC test failed: program counter incorrect" << std::endl;
+        return;
+    }
+
+    m_flags.cy = 0;
+
+    cnc();
+    if (m_registers.programCounter != 0x2010)
+    {
+        std::cout << "CNC test failed: program counter incorrect" << std::endl;
+    }
+    else if (m_registers.stackPointer != 0xFFFD)
+    {
+        std::cout << "CNC test failed: stack pointer value incorrect" << std::endl;
+    }
+    else if (m_memory[m_registers.stackPointer] != 6)
+    {
+        std::cout << "CNC test failed: stack return value incorrect" << std::endl;
+    }
+    else
+    {
+        std::cout << "CNC test passed!" << std::endl;
+    }
+}
+void CPU::testCC()
+{
+    m_registers.stackPointer = 0xFFFF;
+    m_registers.programCounter = 0;
+    m_memory[4] = 0x10;
+    m_memory[5] = 0x20;
+    m_flags.cy = 0;
+
+    cc();
+
+    if (m_registers.programCounter != 3)
+    {
+        std::cout << "CC test failed: program counter incorrect" << std::endl;
+        return;
+    }
+
+    m_flags.cy = 1;
+
+    cc();
+    if (m_registers.programCounter != 0x2010)
+    {
+        std::cout << "CC test failed: program counter incorrect" << std::endl;
+    }
+    else if (m_registers.stackPointer != 0xFFFD)
+    {
+        std::cout << "CC test failed: stack pointer value incorrect" << std::endl;
+    }
+    else if (m_memory[m_registers.stackPointer] != 6)
+    {
+        std::cout << "CC test failed: stack return value incorrect" << std::endl;
+    }
+    else
+    {
+        std::cout << "CC test passed!" << std::endl;
+    }
+}
+void CPU::testCPO()
+{
+    m_registers.stackPointer = 0xFFFF;
+    m_registers.programCounter = 0;
+    m_memory[4] = 0x10;
+    m_memory[5] = 0x20;
+    m_flags.p = 1;
+
+    cpo();
+
+    if (m_registers.programCounter != 3)
+    {
+        std::cout << "CPO test failed: program counter incorrect" << std::endl;
+        return;
+    }
+
+    m_flags.p = 0;
+
+    cpo();
+    if (m_registers.programCounter != 0x2010)
+    {
+        std::cout << "CPO test failed: program counter incorrect" << std::endl;
+    }
+    else if (m_registers.stackPointer != 0xFFFD)
+    {
+        std::cout << "CPO test failed: stack pointer value incorrect" << std::endl;
+    }
+    else if (m_memory[m_registers.stackPointer] != 6)
+    {
+        std::cout << "CPO test failed: stack return value incorrect" << std::endl;
+    }
+    else
+    {
+        std::cout << "CPO test passed!" << std::endl;
+    }
+}
+void CPU::testCPE()
+{
+    m_registers.stackPointer = 0xFFFF;
+    m_registers.programCounter = 0;
+    m_memory[4] = 0x10;
+    m_memory[5] = 0x20;
+    m_flags.p = 0;
+
+    cpe();
+
+    if (m_registers.programCounter != 3)
+    {
+        std::cout << "CPE test failed: program counter incorrect" << std::endl;
+        return;
+    }
+
+    m_flags.p = 1;
+
+    cpe();
+    if (m_registers.programCounter != 0x2010)
+    {
+        std::cout << "CPE test failed: program counter incorrect" << std::endl;
+    }
+    else if (m_registers.stackPointer != 0xFFFD)
+    {
+        std::cout << "CPE test failed: stack pointer value incorrect" << std::endl;
+    }
+    else if (m_memory[m_registers.stackPointer] != 6)
+    {
+        std::cout << "CPE test failed: stack return value incorrect" << std::endl;
+    }
+    else
+    {
+        std::cout << "CPE test passed!" << std::endl;
+    }
+}
+void CPU::testCP()
+{
+    m_registers.stackPointer = 0xFFFF;
+    m_registers.programCounter = 0;
+    m_memory[4] = 0x10;
+    m_memory[5] = 0x20;
+    m_flags.s = 1;
+
+    cp();
+
+    if (m_registers.programCounter != 3)
+    {
+        std::cout << "CP test failed: program counter incorrect" << std::endl;
+        return;
+    }
+
+    m_flags.s = 0;
+
+    cp();
+    if (m_registers.programCounter != 0x2010)
+    {
+        std::cout << "CP test failed: program counter incorrect" << std::endl;
+    }
+    else if (m_registers.stackPointer != 0xFFFD)
+    {
+        std::cout << "CP test failed: stack pointer value incorrect" << std::endl;
+    }
+    else if (m_memory[m_registers.stackPointer] != 6)
+    {
+        std::cout << "CP test failed: stack return value incorrect" << std::endl;
+    }
+    else
+    {
+        std::cout << "CP test passed!" << std::endl;
+    }
+}
+void CPU::testCM()
+{
+    m_registers.stackPointer = 0xFFFF;
+    m_registers.programCounter = 0;
+    m_memory[4] = 0x10;
+    m_memory[5] = 0x20;
+    m_flags.s = 0;
+
+    cm();
+
+    if (m_registers.programCounter != 3)
+    {
+        std::cout << "CM test failed: program counter incorrect" << std::endl;
+        return;
+    }
+
+    m_flags.s = 1;
+
+    cm();
+    if (m_registers.programCounter != 0x2010)
+    {
+        std::cout << "CM test failed: program counter incorrect" << std::endl;
+    }
+    else if (m_registers.stackPointer != 0xFFFD)
+    {
+        std::cout << "CM test failed: stack pointer value incorrect" << std::endl;
+    }
+    else if (m_memory[m_registers.stackPointer] != 6)
+    {
+        std::cout << "CM test failed: stack return value incorrect" << std::endl;
+    }
+    else
+    {
+        std::cout << "CM test passed!" << std::endl;
+    }
+}
+
+void CPU::testRET()
+{
+    m_registers.stackPointer = 0xFFFD;
+    m_registers.programCounter = 3;
+    m_memory[m_registers.stackPointer] = 0;
+
+    ret();
+
+    if (m_registers.stackPointer != 0xFFFF)
+    {
+        std::cout << "RET test failed: incorrect stack pointer value" << std::endl;
+    }
+    else if (m_registers.programCounter != 0)
+    {
+        std::cout << "RET test failed: incorrect program counter value" << std::endl;
+    }
+    else
+    {
+        std::cout << "RET test passed!" << std::endl;
+    }
+}
+void CPU::testRNZ()
+{
+    m_registers.stackPointer = 0xFFFD;
+    m_registers.programCounter = 3;
+    m_memory[m_registers.stackPointer] = 0;
+    m_flags.z = 1;
+
+    rnz();
+
+    if (m_registers.programCounter != 4)
+    {
+        std::cout << "RNZ test failed: incorrect program counter value" << std::endl;
+        return;
+    }
+
+    m_flags.z = 0;
+
+    rnz();
+
+    if (m_registers.stackPointer != 0xFFFF)
+    {
+        std::cout << "RNZ test failed: stack pointer value incorrect" << std::endl;
+    }
+    else if(m_registers.programCounter != 0)
+    {
+        std::cout << "RNZ test failed: program counvet value incorrect" << std::endl;
+    }
+    else
+    {
+        std::cout << "RNZ test passed!" << std::endl;
+    }
+}
+void CPU::testRZ()
+{
+    m_registers.stackPointer = 0xFFFD;
+    m_registers.programCounter = 3;
+    m_memory[m_registers.stackPointer] = 0;
+    m_flags.z = 0;
+
+    rz();
+
+    if (m_registers.programCounter != 4)
+    {
+        std::cout << "RZ test failed: incorrect program counter value" << std::endl;
+        return;
+    }
+
+    m_flags.z = 1;
+
+    rz();
+
+    if (m_registers.stackPointer != 0xFFFF)
+    {
+        std::cout << "RZ test failed: stack pointer value incorrect" << std::endl;
+    }
+    else if (m_registers.programCounter != 0)
+    {
+        std::cout << "RZ test failed: program counvet value incorrect" << std::endl;
+    }
+    else
+    {
+        std::cout << "RZ test passed!" << std::endl;
+    }
+}
+void CPU::testRNC()
+{
+    m_registers.stackPointer = 0xFFFD;
+    m_registers.programCounter = 3;
+    m_memory[m_registers.stackPointer] = 0;
+    m_flags.cy = 1;
+
+    rnc();
+
+    if (m_registers.programCounter != 4)
+    {
+        std::cout << "RNC test failed: incorrect program counter value" << std::endl;
+        return;
+    }
+
+    m_flags.cy = 0;
+
+    rnc();
+
+    if (m_registers.stackPointer != 0xFFFF)
+    {
+        std::cout << "RNC test failed: stack pointer value incorrect" << std::endl;
+    }
+    else if (m_registers.programCounter != 0)
+    {
+        std::cout << "RNC test failed: program counvet value incorrect" << std::endl;
+    }
+    else
+    {
+        std::cout << "RNC test passed!" << std::endl;
+    }
+}
+void CPU::testRC()
+{
+    m_registers.stackPointer = 0xFFFD;
+    m_registers.programCounter = 3;
+    m_memory[m_registers.stackPointer] = 0;
+    m_flags.cy = 0;
+
+    rc();
+
+    if (m_registers.programCounter != 4)
+    {
+        std::cout << "RC test failed: incorrect program counter value" << std::endl;
+        return;
+    }
+
+    m_flags.cy = 1;
+
+    rc();
+
+    if (m_registers.stackPointer != 0xFFFF)
+    {
+        std::cout << "RC test failed: stack pointer value incorrect" << std::endl;
+    }
+    else if (m_registers.programCounter != 0)
+    {
+        std::cout << "RC test failed: program counvet value incorrect" << std::endl;
+    }
+    else
+    {
+        std::cout << "RC test passed!" << std::endl;
+    }
+}
+void CPU::testRPO()
+{
+    m_registers.stackPointer = 0xFFFD;
+    m_registers.programCounter = 3;
+    m_memory[m_registers.stackPointer] = 0;
+    m_flags.p = 1;
+
+    rpo();
+
+    if (m_registers.programCounter != 4)
+    {
+        std::cout << "RPO test failed: incorrect program counter value" << std::endl;
+        return;
+    }
+
+    m_flags.p = 0;
+
+    rpo();
+
+    if (m_registers.stackPointer != 0xFFFF)
+    {
+        std::cout << "RPO test failed: stack pointer value incorrect" << std::endl;
+    }
+    else if (m_registers.programCounter != 0)
+    {
+        std::cout << "RPO test failed: program counvet value incorrect" << std::endl;
+    }
+    else
+    {
+        std::cout << "RPO test passed!" << std::endl;
+    }
+}
+void CPU::testRPE()
+{
+    m_registers.stackPointer = 0xFFFD;
+    m_registers.programCounter = 3;
+    m_memory[m_registers.stackPointer] = 0;
+    m_flags.p = 0;
+
+    rpe();
+
+    if (m_registers.programCounter != 4)
+    {
+        std::cout << "RPE test failed: incorrect program counter value" << std::endl;
+        return;
+    }
+
+    m_flags.p = 1;
+
+    rpe();
+
+    if (m_registers.stackPointer != 0xFFFF)
+    {
+        std::cout << "RPE test failed: stack pointer value incorrect" << std::endl;
+    }
+    else if (m_registers.programCounter != 0)
+    {
+        std::cout << "RPE test failed: program counvet value incorrect" << std::endl;
+    }
+    else
+    {
+        std::cout << "RPE test passed!" << std::endl;
+    }
+}
+void CPU::testRP()
+{
+    m_registers.stackPointer = 0xFFFD;
+    m_registers.programCounter = 3;
+    m_memory[m_registers.stackPointer] = 0;
+    m_flags.s = 1;
+
+    rp();
+
+    if (m_registers.programCounter != 4)
+    {
+        std::cout << "RP test failed: incorrect program counter value" << std::endl;
+        return;
+    }
+
+    m_flags.s = 0;
+
+    rp();
+
+    if (m_registers.stackPointer != 0xFFFF)
+    {
+        std::cout << "RP test failed: stack pointer value incorrect" << std::endl;
+    }
+    else if (m_registers.programCounter != 0)
+    {
+        std::cout << "RP test failed: program counvet value incorrect" << std::endl;
+    }
+    else
+    {
+        std::cout << "RP test passed!" << std::endl;
+    }
+}
+void CPU::testRM()
+{
+    m_registers.stackPointer = 0xFFFD;
+    m_registers.programCounter = 3;
+    m_memory[m_registers.stackPointer] = 0;
+    m_flags.s = 0;
+
+    rm();
+
+    if (m_registers.programCounter != 4)
+    {
+        std::cout << "RM test failed: incorrect program counter value" << std::endl;
+        return;
+    }
+
+    m_flags.s = 1;
+
+    rm();
+
+    if (m_registers.stackPointer != 0xFFFF)
+    {
+        std::cout << "RM test failed: stack pointer value incorrect" << std::endl;
+    }
+    else if (m_registers.programCounter != 0)
+    {
+        std::cout << "RM test failed: program counvet value incorrect" << std::endl;
+    }
+    else
+    {
+        std::cout << "RM test passed!" << std::endl;
+    }
+}
+
+void CPU::testRST0()
+{
+    m_registers.programCounter = 0x2010;
+    m_registers.stackPointer = 0xFFFF;
+    m_memory[m_registers.stackPointer - 2] = 0;
+
+    rst0();
+
+    if (m_registers.programCounter != 0)
+    {
+        std::cout << "RST0 test failed: program counter incorrect" << std::endl;
+    }
+    else if (m_registers.stackPointer != 0xFFFD)
+    {
+        std::cout << "RST0 test filed: stack pointer incorrect" << std::endl;
+    }
+    else if (getWord(m_registers.stackPointer) != 0x2010)
+    {
+        std::cout << "RST0 test failed: incorrect return value pushed on to stack" << std::endl;
+    }
+    else
+    {
+        std::cout << "RST0 test passed!" << std::endl;
+    }
+}
+void CPU::testRST1()
+{
+    m_registers.programCounter = 0x2010;
+    m_registers.stackPointer = 0xFFFF;
+    m_memory[m_registers.stackPointer - 2] = 0;
+
+    rst1();
+
+    if (m_registers.programCounter != 0x8)
+    {
+        std::cout << "RST1 test failed: program counter incorrect" << std::endl;
+    }
+    else if (m_registers.stackPointer != 0xFFFD)
+    {
+        std::cout << "RST1 test filed: stack pointer incorrect" << std::endl;
+    }
+    else if (getWord(m_registers.stackPointer) != 0x2010)
+    {
+        std::cout << "RST1 test failed: incorrect return value pushed on to stack" << std::endl;
+    }
+    else
+    {
+        std::cout << "RST1 test passed!" << std::endl;
+    }
+}
+void CPU::testRST2()
+{
+    m_registers.programCounter = 0x2010;
+    m_registers.stackPointer = 0xFFFF;
+    m_memory[m_registers.stackPointer - 2] = 0;
+
+    rst2();
+
+    if (m_registers.programCounter != 0x10)
+    {
+        std::cout << "RST2 test failed: program counter incorrect" << std::endl;
+    }
+    else if (m_registers.stackPointer != 0xFFFD)
+    {
+        std::cout << "RST2 test filed: stack pointer incorrect" << std::endl;
+    }
+    else if (getWord(m_registers.stackPointer) != 0x2010)
+    {
+        std::cout << "RST2 test failed: incorrect return value pushed on to stack" << std::endl;
+    }
+    else
+    {
+        std::cout << "RST2 test passed!" << std::endl;
+    }
+}
+void CPU::testRST3()
+{
+    m_registers.programCounter = 0x2010;
+    m_registers.stackPointer = 0xFFFF;
+    m_memory[m_registers.stackPointer - 2] = 0;
+
+    rst3();
+
+    if (m_registers.programCounter != 0x18)
+    {
+        std::cout << "RST3 test failed: program counter incorrect" << std::endl;
+    }
+    else if (m_registers.stackPointer != 0xFFFD)
+    {
+        std::cout << "RST3 test filed: stack pointer incorrect" << std::endl;
+    }
+    else if (getWord(m_registers.stackPointer) != 0x2010)
+    {
+        std::cout << "RST3 test failed: incorrect return value pushed on to stack" << std::endl;
+    }
+    else
+    {
+        std::cout << "RST3 test passed!" << std::endl;
+    }
+}
+void CPU::testRST4()
+{
+    m_registers.programCounter = 0x2010;
+    m_registers.stackPointer = 0xFFFF;
+    m_memory[m_registers.stackPointer - 2] = 0;
+
+    rst4();
+
+    if (m_registers.programCounter != 0x20)
+    {
+        std::cout << "RST4 test failed: program counter incorrect" << std::endl;
+    }
+    else if (m_registers.stackPointer != 0xFFFD)
+    {
+        std::cout << "RST4 test filed: stack pointer incorrect" << std::endl;
+    }
+    else if (getWord(m_registers.stackPointer) != 0x2010)
+    {
+        std::cout << "RST4 test failed: incorrect return value pushed on to stack" << std::endl;
+    }
+    else
+    {
+        std::cout << "RST4 test passed!" << std::endl;
+    }
+}
+void CPU::testRST5()
+{
+    m_registers.programCounter = 0x2010;
+    m_registers.stackPointer = 0xFFFF;
+    m_memory[m_registers.stackPointer - 2] = 0;
+
+    rst5();
+
+    if (m_registers.programCounter != 0x28)
+    {
+        std::cout << "RST5 test failed: program counter incorrect" << std::endl;
+    }
+    else if (m_registers.stackPointer != 0xFFFD)
+    {
+        std::cout << "RST5 test filed: stack pointer incorrect" << std::endl;
+    }
+    else if (getWord(m_registers.stackPointer) != 0x2010)
+    {
+        std::cout << "RST5 test failed: incorrect return value pushed on to stack" << std::endl;
+    }
+    else
+    {
+        std::cout << "RST5 test passed!" << std::endl;
+    }
+}
+void CPU::testRST6()
+{
+    m_registers.programCounter = 0x2010;
+    m_registers.stackPointer = 0xFFFF;
+    m_memory[m_registers.stackPointer - 2] = 0;
+
+    rst6();
+
+    if (m_registers.programCounter != 0x30)
+    {
+        std::cout << "RST6 test failed: program counter incorrect" << std::endl;
+    }
+    else if (m_registers.stackPointer != 0xFFFD)
+    {
+        std::cout << "RST6 test filed: stack pointer incorrect" << std::endl;
+    }
+    else if (getWord(m_registers.stackPointer) != 0x2010)
+    {
+        std::cout << "RST6 test failed: incorrect return value pushed on to stack" << std::endl;
+    }
+    else
+    {
+        std::cout << "RST6 test passed!" << std::endl;
+    }
+}
+void CPU::testRST7()
+{
+    m_registers.programCounter = 0x2010;
+    m_registers.stackPointer = 0xFFFF;
+    m_memory[m_registers.stackPointer - 2] = 0;
+
+    rst7();
+
+    if (m_registers.programCounter != 0x38)
+    {
+        std::cout << "RST7 test failed: program counter incorrect" << std::endl;
+    }
+    else if (m_registers.stackPointer != 0xFFFD)
+    {
+        std::cout << "RST7 test filed: stack pointer incorrect" << std::endl;
+    }
+    else if (getWord(m_registers.stackPointer) != 0x2010)
+    {
+        std::cout << "RST7 test failed: incorrect return value pushed on to stack" << std::endl;
+    }
+    else
+    {
+        std::cout << "RST7 test passed!" << std::endl;
+    }
+}
+
+void CPU::testPUSHB()
+{
+    m_registers.programCounter = 0;
+    m_registers.BC = 0x2010;
+    m_registers.stackPointer = 0xFFFF;
+    m_memory[m_registers.stackPointer - 2] = 0;
+
+    pushb();
+
+    if (m_registers.programCounter != 1)
+    {
+        std::cout << "PUSHB test failed: program counter incorrect" << std::endl;
+    }
+    else if (m_registers.stackPointer != 0xFFFD)
+    {
+        std::cout << "PUSHB test failed: stack pointer incorrect" << std::endl;
+    }
+    else if (getWord(m_registers.stackPointer) != 0x2010)
+    {
+        std::cout << "PUSHB test failed: incorrect value on stack" << std::endl;
+    }
+    else
+    {
+        std::cout << "PUSHB test passed!" << std::endl;
+    }
+}
+void CPU::testPUSHD()
+{
+    m_registers.programCounter = 0;
+    m_registers.DE = 0x2010;
+    m_registers.stackPointer = 0xFFFF;
+    m_memory[m_registers.stackPointer - 2] = 0;
+
+    pushd();
+
+    if (m_registers.programCounter != 1)
+    {
+        std::cout << "PUSHD test failed: program counter incorrect" << std::endl;
+    }
+    else if (m_registers.stackPointer != 0xFFFD)
+    {
+        std::cout << "PUSHD test failed: stack pointer incorrect" << std::endl;
+    }
+    else if (getWord(m_registers.stackPointer) != 0x2010)
+    {
+        std::cout << "PUSHD test failed: incorrect value on stack" << std::endl;
+    }
+    else
+    {
+        std::cout << "PUSHD test passed!" << std::endl;
+    }
+}
+void CPU::testPUSHH()
+{
+    m_registers.programCounter = 0;
+    m_registers.HL = 0x2010;
+    m_registers.stackPointer = 0xFFFF;
+    m_memory[m_registers.stackPointer - 2] = 0;
+
+    pushh();
+
+    if (m_registers.programCounter != 1)
+    {
+        std::cout << "PUSHH test failed: program counter incorrect" << std::endl;
+    }
+    else if (m_registers.stackPointer != 0xFFFD)
+    {
+        std::cout << "PUSHH test failed: stack pointer incorrect" << std::endl;
+    }
+    else if (getWord(m_registers.stackPointer) != 0x2010)
+    {
+        std::cout << "PUSHH test failed: incorrect value on stack" << std::endl;
+    }
+    else
+    {
+        std::cout << "PUSHH test passed!" << std::endl;
+    }
+}
+void CPU::testPUSHPSW()
+{
+    m_registers.stackPointer = 0xFFFF;
+    m_registers.programCounter = 0;
+    m_registers.A = 0x10;
+    m_flags.ac = 1;
+    m_flags.cy = 1;
+    m_flags.p = 1;
+    m_flags.s = 1;
+    m_flags.z = 1;
+    m_flags.psw = 0;
+
+    pushpsw();
+
+    if (m_registers.stackPointer != 0xFFFD)
+    {
+        std::cout << "PUSHPSW test failed: stack pointer incorrect" << std::endl;
+    }
+    else if (m_registers.programCounter != 1)
+    {
+        std::cout << "PUSHPSW test failed: program counter incorrect" << std::endl;
+    }
+    else if (m_flags.psw != 0b11010101)
+    {
+        std::cout << "PUSHPSW test failed: psw value incorrect" << std::endl;
+    }
+    else if (m_memory[m_registers.stackPointer] != m_flags.psw)
+    {
+        std::cout << "PUSHPSW test failed: incorrect psw pushed on to stack" << std::endl;
+    }
+    else if (m_memory[m_registers.stackPointer + 1] != m_registers.A)
+    {
+        std::cout << "PUSHPSW test failed: incorrect A value pushed on to stack" << std::endl;
+    }
+    else
+    {
+        std::cout << "PUSHPSW test passed!" << std::endl;
+    }
+}
+void CPU::testPOPB()
+{
+    m_registers.stackPointer = 0xFFFD;
+    m_registers.programCounter = 0;
+    m_registers.BC = 0;
+    m_memory[m_registers.stackPointer] = 0x10;
+    m_memory[m_registers.stackPointer + 1] = 0x20;
+
+    popb();
+
+    if (m_registers.stackPointer != 0xFFFF)
+    {
+        std::cout << "POPB test failed: incorrect stack pointer value" << std::endl;
+    }
+    else if (m_registers.programCounter != 1)
+    {
+        std::cout << "POPB test failed: incorrect program counter value" << std::endl;
+    }
+    else if (m_registers.BC != 0x2010)
+    {
+        std::cout << "POPB test failed: BC value incorrect" << std::endl;
+    }
+    else
+    {
+        std::cout << "POPB test passed!" << std::endl;
+    }
+}
+void CPU::testPOPD()
+{
+    m_registers.stackPointer = 0xFFFD;
+    m_registers.programCounter = 0;
+    m_registers.DE = 0;
+    m_memory[m_registers.stackPointer] = 0x10;
+    m_memory[m_registers.stackPointer + 1] = 0x20;
+
+    popd();
+
+    if (m_registers.stackPointer != 0xFFFF)
+    {
+        std::cout << "POPD test failed: incorrect stack pointer value" << std::endl;
+    }
+    else if (m_registers.programCounter != 1)
+    {
+        std::cout << "POPD test failed: incorrect program counter value" << std::endl;
+    }
+    else if (m_registers.DE != 0x2010)
+    {
+        std::cout << "POPD test failed: BC value incorrect" << std::endl;
+    }
+    else
+    {
+        std::cout << "POPD test passed!" << std::endl;
+    }
+}
+void CPU::testPOPH()
+{
+    m_registers.stackPointer = 0xFFFD;
+    m_registers.programCounter = 0;
+    m_registers.HL = 0;
+    m_memory[m_registers.stackPointer] = 0x10;
+    m_memory[m_registers.stackPointer + 1] = 0x20;
+
+    poph();
+
+    if (m_registers.stackPointer != 0xFFFF)
+    {
+        std::cout << "POPH test failed: incorrect stack pointer value" << std::endl;
+    }
+    else if (m_registers.programCounter != 1)
+    {
+        std::cout << "POPH test failed: incorrect program counter value" << std::endl;
+    }
+    else if (m_registers.HL != 0x2010)
+    {
+        std::cout << "POPH test failed: BC value incorrect" << std::endl;
+    }
+    else
+    {
+        std::cout << "POPH test passed!" << std::endl;
+    }
+}
+void CPU::testPOPPSW()
+{
+    m_registers.A = 0;
+    m_registers.programCounter = 0;
+    m_registers.stackPointer = 0xFFFD;
+    m_memory[m_registers.stackPointer] = 0b11010101;
+    m_memory[m_registers.stackPointer + 1] = 0x20;
+
+    m_flags.ac = 0;
+    m_flags.cy = 0;
+    m_flags.p = 0;
+    m_flags.s = 0;
+    m_flags.z = 0;
+    m_flags.psw = 0;
+
+    poppsw();
+
+    if (m_registers.stackPointer != 0xFFFF)
+    {
+        std::cout << "POPPSW test failed: incorrect stack pointer value" << std::endl;
+    }
+    else if (m_registers.programCounter != 1)
+    {
+        std::cout << "POPPSW test failed: incorrect program counter value" << std::endl;
+    }
+    else if (m_registers.A != 0x20)
+    {
+        std::cout << "POPPSW test failed: incorrect A value" << std::endl;
+    }
+    else if (!m_flags.ac || !m_flags.cy || !m_flags.p || !m_flags.s || !m_flags.z)
+    {
+        std::cout << "POPPSW test failed: incorrect flag value" << std::endl;
+    }
+    else if (m_flags.psw != 0b11010101)
+    {
+        std::cout << "POPPSW test failed: incorrect psw value" << std::endl;
+    }
+    else
+    {
+        std::cout << "POPPPSW test passed!" << std::endl;
     }
 }
