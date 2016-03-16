@@ -143,7 +143,7 @@ void CPU::movbd()
 //0x43 MOV B, E
 void CPU::movbe()
 {
-    m_registers.B = m_registers.D;
+    m_registers.B = m_registers.E;
     m_registers.programCounter++;
 }
 //0x44 MOV B, H

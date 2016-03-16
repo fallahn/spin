@@ -26,6 +26,10 @@ source distribution.
 
 #ifdef OP_TEST
 
+//move instructions
+void testMOV();
+
+
 //load immediate register BC
 void testLXIB();
 //load immediate register DE
@@ -60,6 +64,18 @@ void testLDA();
 //store A in mem@PC
 void testSTA();
 
+//move immediate instructions
+void testMVI();
+
+//add register to accumulator
+void testADD();
+//
+void testADC();
+
+//subtract register from accumulator
+void testSUB();
+//
+void testSBB();
 
 //increment 8 bit registers
 void testINC8();
@@ -179,6 +195,8 @@ void testPOPPSW();
 
 void runTests()
 {
+    testMOV();
+
     testLXIB();
     testLXID();
     testLXIH();
@@ -196,6 +214,14 @@ void runTests()
     testSTAXD();
     testLDA();
     testSTA();
+
+    testMVI();
+
+    testADD();
+    testADC();
+
+    testSUB();
+    testSBB();
 
     testINC8();
     testDEC8();

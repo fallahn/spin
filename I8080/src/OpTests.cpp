@@ -26,8 +26,297 @@ source distribution.
 #include <I8080/I8080.hpp>
 
 #include <iostream>
+#include <cassert>
+#include <functional>
 
 using namespace I8080;
+
+void CPU::testMOV()
+{
+    std::function<void()>rstTest = [this]()
+    {
+        m_registers.programCounter = 0;
+        m_registers.A = 1;
+        m_registers.B = 2;
+        m_registers.C = 3;
+        m_registers.D = 4;
+        m_registers.E = 5;
+        m_registers.H = 6;
+        m_registers.L = 7;
+        m_memory[m_registers.HL] = 8;
+    };
+    rstTest();
+
+    movaa();
+    assert(m_registers.A == 1);
+    assert(m_registers.programCounter == 1);
+
+    movab();
+    assert(m_registers.A == 2);
+    assert(m_registers.programCounter == 2);
+
+    movac();
+    assert(m_registers.A == 3);
+    assert(m_registers.programCounter == 3);
+
+    movad();
+    assert(m_registers.A == 4);
+    assert(m_registers.programCounter == 4);
+
+    movae();
+    assert(m_registers.A == 5);
+    assert(m_registers.programCounter == 5);
+
+    movah();
+    assert(m_registers.A == 6);
+    assert(m_registers.programCounter == 6);
+
+    moval();
+    assert(m_registers.A == 7);
+    assert(m_registers.programCounter == 7);
+
+    movam();
+    assert(m_registers.A == 8);
+    assert(m_registers.programCounter == 8);
+
+    rstTest();
+
+    movba();
+    assert(m_registers.B == 1);
+    assert(m_registers.programCounter == 1);
+
+    movbb();
+    assert(m_registers.B == 1);
+    assert(m_registers.programCounter == 2);
+
+    movbc();
+    assert(m_registers.B == 3);
+    assert(m_registers.programCounter == 3);
+
+    movbd();
+    assert(m_registers.B == 4);
+    assert(m_registers.programCounter == 4);
+
+    movbe();
+    assert(m_registers.B == 5);
+    assert(m_registers.programCounter == 5);
+
+    movbh();
+    assert(m_registers.B == 6);
+    assert(m_registers.programCounter == 6);
+
+    movbl();
+    assert(m_registers.B == 7);
+    assert(m_registers.programCounter == 7);
+
+    movbm();
+    assert(m_registers.B == 8);
+    assert(m_registers.programCounter == 8);
+
+    rstTest();
+
+    movca();
+    assert(m_registers.C == 1);
+    assert(m_registers.programCounter == 1);
+
+    movcb();
+    assert(m_registers.C == 2);
+    assert(m_registers.programCounter == 2);
+
+    movcc();
+    assert(m_registers.C == 2);
+    assert(m_registers.programCounter == 3);
+
+    movcd();
+    assert(m_registers.C == 4);
+    assert(m_registers.programCounter == 4);
+
+    movce();
+    assert(m_registers.C == 5);
+    assert(m_registers.programCounter == 5);
+
+    movch();
+    assert(m_registers.C == 6);
+    assert(m_registers.programCounter == 6);
+
+    movcl();
+    assert(m_registers.C == 7);
+    assert(m_registers.programCounter == 7);
+
+    movcm();
+    assert(m_registers.C == 8);
+    assert(m_registers.programCounter == 8);
+
+    rstTest();
+
+    movda();
+    assert(m_registers.D == 1);
+    assert(m_registers.programCounter == 1);
+
+    movdb();
+    assert(m_registers.D == 2);
+    assert(m_registers.programCounter == 2);
+
+    movdc();
+    assert(m_registers.D == 3);
+    assert(m_registers.programCounter = 3);
+
+    movdd();
+    assert(m_registers.D == 3);
+    assert(m_registers.programCounter == 4);
+
+    movde();
+    assert(m_registers.D == 5);
+    assert(m_registers.programCounter == 5);
+
+    movdh();
+    assert(m_registers.D == 6);
+    assert(m_registers.programCounter == 6);
+
+    movdl();
+    assert(m_registers.D == 7);
+    assert(m_registers.programCounter == 7);
+
+    movdm();
+    assert(m_registers.D == 8);
+    assert(m_registers.programCounter == 8);
+
+    rstTest();
+
+    movea();
+    assert(m_registers.E == m_registers.A);
+    assert(m_registers.programCounter == 1);
+
+    moveb();
+    assert(m_registers.E == m_registers.B);
+    assert(m_registers.programCounter == 2);
+
+    movec();
+    assert(m_registers.E == m_registers.C);
+    assert(m_registers.programCounter == 3);
+
+    moved();
+    assert(m_registers.E == m_registers.D);
+    assert(m_registers.programCounter == 4);
+
+    movee();
+    assert(m_registers.E == m_registers.D);
+    assert(m_registers.programCounter == 5);
+
+    moveh();
+    assert(m_registers.E == m_registers.H);
+    assert(m_registers.programCounter == 6);
+
+    movel();
+    assert(m_registers.E == m_registers.L);
+    assert(m_registers.programCounter == 7);
+
+    movem();
+    assert(m_registers.E == 8);
+    assert(m_registers.programCounter == 8);
+
+    rstTest();
+
+    movha();
+    assert(m_registers.H == m_registers.A);
+    assert(m_registers.programCounter == 1);
+
+    movhb();
+    assert(m_registers.H == m_registers.B);
+    assert(m_registers.programCounter == 2);
+
+    movhc();
+    assert(m_registers.H == m_registers.C);
+    assert(m_registers.programCounter == 3);
+
+    movhd();
+    assert(m_registers.H == m_registers.D);
+    assert(m_registers.programCounter == 4);
+
+    movhe();
+    assert(m_registers.H == m_registers.E);
+    assert(m_registers.programCounter == 5);
+
+    movhh();
+    assert(m_registers.H == m_registers.E);
+    assert(m_registers.programCounter == 6);
+
+    movhl();
+    assert(m_registers.H == m_registers.L);
+    assert(m_registers.programCounter == 7);
+
+    m_memory[m_registers.HL] = 8;
+
+    movhm();
+    assert(m_registers.H == 8);
+    assert(m_registers.programCounter == 8);
+
+    rstTest();
+
+    movla();
+    assert(m_registers.L == m_registers.A);
+    assert(m_registers.programCounter == 1);
+
+    movlb();
+    assert(m_registers.L == m_registers.B);
+    assert(m_registers.programCounter == 2);
+
+    movlc();
+    assert(m_registers.L == m_registers.C);
+    assert(m_registers.programCounter == 3);
+
+    movld();
+    assert(m_registers.L == m_registers.D);
+    assert(m_registers.programCounter == 4);
+
+    movle();
+    assert(m_registers.L == m_registers.E);
+    assert(m_registers.programCounter == 5);
+
+    movlh();
+    assert(m_registers.L == m_registers.H);
+    assert(m_registers.programCounter == 6);
+
+    movll();
+    assert(m_registers.L == m_registers.H);
+    assert(m_registers.programCounter == 7);
+
+    m_memory[m_registers.HL] = 8;
+
+    movlm();
+    assert(m_registers.L == 8);
+    assert(m_registers.programCounter == 8);
+
+    rstTest();
+
+    movma();
+    assert(m_memory[m_registers.HL] == 1);
+    assert(m_registers.programCounter == 1);
+
+    movmb();
+    assert(m_memory[m_registers.HL] == 2);
+    assert(m_registers.programCounter == 2);
+
+    movmc();
+    assert(m_memory[m_registers.HL] == 3);
+    assert(m_registers.programCounter == 3);
+
+    movmd();
+    assert(m_memory[m_registers.HL] == 4);
+    assert(m_registers.programCounter == 4);
+
+    movme();
+    assert(m_memory[m_registers.HL] == 5);
+    assert(m_registers.programCounter == 5);
+
+    movmh();
+    assert(m_memory[m_registers.HL] == 6);
+    assert(m_registers.programCounter == 6);
+
+    movml();
+    assert(m_memory[m_registers.HL] == 7);
+    assert(m_registers.programCounter == 7);
+}
 
 void CPU::testLXIB()
 {
@@ -368,6 +657,214 @@ void CPU::testSTA()
         std::cout << "STA test passed!" << std::endl;
     }
 }
+
+void CPU::testMVI()
+{
+    m_registers.programCounter = 0;
+    m_memory[1] = 1;
+    m_memory[3] = 2;
+    m_memory[5] = 3;
+    m_memory[7] = 4;
+    m_memory[9] = 5;
+    m_memory[11] = 6;
+    m_memory[13] = 7;
+    m_memory[15] = 8;
+
+    m_registers.A = 0;
+    m_registers.B = 0;
+    m_registers.C = 0;
+    m_registers.D = 0;
+    m_registers.E = 0;
+    m_registers.H = 0;
+    m_registers.L = 0;
+    m_memory[0x0706] = 0;
+
+    mvia();
+    assert(m_registers.A == 1);
+    assert(m_registers.programCounter == 2);
+    mvib();
+    assert(m_registers.B == 2);
+    assert(m_registers.programCounter == 4);
+    mvic();
+    assert(m_registers.C == 3);
+    assert(m_registers.programCounter == 6);
+    mvid();
+    assert(m_registers.D == 4);
+    assert(m_registers.programCounter == 8);
+    mvie();
+    assert(m_registers.E == 5);
+    assert(m_registers.programCounter == 10);
+    mvih();
+    assert(m_registers.H == 6);
+    assert(m_registers.programCounter == 12);
+    mvil();
+    assert(m_registers.L == 7);
+    assert(m_registers.programCounter == 14);
+    mvim();
+    assert(m_memory[m_registers.HL] == 8);
+    assert(m_registers.programCounter == 16);
+}
+
+void CPU::testADD()
+{
+    m_registers.programCounter = 0;
+    m_registers.A = 1;
+    m_registers.B = 2;
+    m_registers.C = 3;
+    m_registers.D = 4;
+    m_registers.E = 5;
+    m_registers.H = 6;
+    m_registers.L = 7;
+    m_memory[m_registers.HL] = 8;
+    m_memory[9] = 9;
+
+    adda();
+    assert(m_registers.A == 2);
+    assert(m_registers.programCounter == 1);
+
+    addb();
+    assert(m_registers.A = 4);
+    assert(m_registers.programCounter == 2);
+
+    addc();
+    assert(m_registers.A == 7);
+    assert(m_registers.programCounter == 3);
+
+    addd();
+    assert(m_registers.A == 11);
+    assert(m_registers.programCounter == 4);
+
+    adde();
+    assert(m_registers.A == 16);
+    assert(m_registers.programCounter == 5);
+
+    addh();
+    assert(m_registers.A == 22);
+    assert(m_registers.programCounter == 6);
+
+    addl();
+    assert(m_registers.A == 29);
+    assert(m_registers.programCounter == 7);
+
+    addm();
+    assert(m_registers.A == 37);
+    assert(m_registers.programCounter == 8);
+
+    adi();
+    assert(m_registers.A = 46);
+    assert(m_registers.programCounter == 10);
+}
+void CPU::testADC()
+{
+    m_flags.cy = 1;
+    m_registers.programCounter = 0;
+    m_registers.A = 1;
+    m_registers.B = 2;
+    m_registers.C = 3;
+    m_registers.D = 4;
+    m_registers.E = 5;
+    m_registers.H = 6;
+    m_registers.L = 7;
+    m_memory[m_registers.HL] = 8;
+    m_memory[9] = 9;
+
+    adca();
+    assert(m_registers.A == 3);
+    assert(m_registers.programCounter == 1);
+    m_flags.cy = 1;
+
+    adcb();
+    assert(m_registers.A == 6);
+    assert(m_registers.programCounter == 2);
+    m_flags.cy = 1;
+
+    adcc();
+    assert(m_registers.A == 10);
+    assert(m_registers.programCounter == 3);
+    m_flags.cy = 1;
+
+    adcd();
+    assert(m_registers.A == 15);
+    assert(m_registers.programCounter == 4);
+    m_flags.cy = 1;
+
+    adce();
+    assert(m_registers.A == 21);
+    assert(m_registers.programCounter == 5);
+    m_flags.cy = 1;
+
+    adch();
+    assert(m_registers.A == 28);
+    assert(m_registers.programCounter == 6);
+    m_flags.cy = 1;
+
+    adcl();
+    assert(m_registers.A == 36);
+    assert(m_registers.programCounter == 7);
+    m_flags.cy = 1;
+
+    adcm();
+    assert(m_registers.A == 45);
+    assert(m_registers.programCounter == 8);
+    m_flags.cy = 1;
+
+    aci();
+    assert(m_registers.A == 55);
+    assert(m_registers.programCounter == 10);
+}
+
+void CPU::testSUB()
+{
+    m_registers.programCounter = 0;
+    m_registers.A = 100;
+    m_registers.B = 1;
+    m_registers.C = 2;
+    m_registers.D = 3;
+    m_registers.E = 4;
+    m_registers.H = 5;
+    m_registers.L = 6;
+    m_memory[m_registers.HL] = 7;
+    m_memory[9] = 8;
+
+    suba();
+    assert(m_registers.A == 0);
+    assert(m_registers.programCounter == 1);
+
+    m_registers.A = 100;
+    subb();
+    assert(m_registers.A == 99);
+    assert(m_registers.programCounter == 2);
+
+    subc();
+    assert(m_registers.A == 97);
+    assert(m_registers.programCounter == 3);
+
+    subd();
+    assert(m_registers.A == 94);
+    assert(m_registers.programCounter == 4);
+
+    sube();
+    assert(m_registers.A == 90);
+    assert(m_registers.programCounter == 5);
+
+    subh();
+    assert(m_registers.A == 85);
+    assert(m_registers.programCounter == 6);
+
+    subl();
+    assert(m_registers.A == 79);
+    assert(m_registers.programCounter == 7);
+
+    subm();
+    assert(m_registers.A == 72);
+    assert(m_registers.programCounter == 8);
+
+    sui();
+    assert(m_registers.A == 64);
+    assert(m_registers.programCounter == 10);
+}
+void CPU::testSBB() {}
+
 
 void CPU::testINC8()
 {
