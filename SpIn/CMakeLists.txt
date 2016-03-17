@@ -38,6 +38,7 @@ endif()
 find_package(OpenGL REQUIRED)
 
 include_directories(
+  ${OPENGL_INCLUDE_DIRECTORIES}
   ${SFML_INCLUDE_DIR} 
   ${CMAKE_SOURCE_DIR}/include
   ${CMAKE_SOURCE_DIR}/../I8080/include)
@@ -60,7 +61,8 @@ endif()
 
 target_link_libraries(spin
   ${SFML_LIBRARIES}
-  ${SFML_DEPENDENCIES})
+  ${SFML_DEPENDENCIES}
+  ${OPENGL_LIBRARIES})
 
 if(UNIX)
   target_link_libraries(spin

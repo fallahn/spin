@@ -26,7 +26,8 @@ source distribution.
 #include <SFML/Window/Event.hpp>
 #include <SFML/System/Clock.hpp>
 
-#include <assert.h>
+#include <cassert>
+#include <cstring>
 
 Machine::Machine()
     : m_shiftValue  (0),
