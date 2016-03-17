@@ -26,7 +26,11 @@ source distribution.
 #include <SFML/Window/Event.hpp>
 #include <SFML/System/Clock.hpp>
 
+#include <assert.h>
+
 Machine::Machine()
+    : m_shiftValue  (0),
+    m_shiftOffset   (0)
 {
     if (m_font.loadFromFile("assets/fonts/VeraMono.ttf"))
     {
@@ -36,6 +40,56 @@ Machine::Machine()
     }
 
     m_display.setPosition(400.f, 300.f);
+
+    I8080::CPU::InputHandler ih = [this](Byte port)
+    {
+        switch (port)
+        {
+        default: break;
+        case 1:
+            return m_ports[1];
+            break;
+        case 2:
+            return m_ports[2];
+            break;
+        case 3:
+            return static_cast<Byte>(((m_shiftValue << m_shiftOffset) & 0xFF));
+            break;
+        }
+    };
+    m_processor.setInputHandler(ih);
+
+    I8080::CPU::OutputHandler oh = [this](Byte port, Byte value)
+    {
+        switch (port)
+        {
+        default: break;
+        case 2:
+            m_shiftOffset = value;
+            break;
+        case 3:
+            //sound
+            //bit 1 = spaceship sound (looped)
+            //bit 2 = Shot
+            //bit 3 = Your ship hit
+            //bit 4 = Invader hit
+            //bit 5 = Extended play sound
+            break;
+        case 4:
+            m_shiftValue = (m_shiftValue << 8) | value;
+            break;
+        case 5:
+            //bit 0 = invaders sound 1
+            //bit 1 = invaders sound 2
+            //bit 2 = invaders sound 3
+            //bit 3 = invaders sound 4
+            //bit 4 = spaceship hit
+            //bit 5 = amplifier enabled/disabled
+            break;
+        }
+    };
+    m_processor.setOutputHandler(oh);
+    std::memset(m_ports.data(), 0, I8080::PORT_COUNT);
 }
 
 //public
@@ -76,15 +130,14 @@ void Machine::run()
     }
 }
 
-
 //private
 void Machine::update(float dt)
-{
-    //34000 * 60 = 2,040,000
+{    
+    //33,333 * 60 = 1,999,980
     //as close as we get to 2MHz
     m_processor.update(17000);
     m_processor.raiseInterrupt(1);
-    m_processor.update(17000);
+    m_processor.update(16333);
     m_processor.raiseInterrupt(2);
 
     m_display.updateBuffer(m_processor.getVRAM());
@@ -100,39 +153,39 @@ void Machine::handleEvent(const sf::Event& evt)
         default: break;
         case sf::Keyboard::Num0:
             //coin insert
-            m_processor.setFlag(1, 0);
+            setFlag(1, 0);
             break;
         case sf::Keyboard::Num1:
             //player 2 start
-            m_processor.setFlag(1, 2);
+            setFlag(1, 2);
             break;
         case sf::Keyboard::Num2:
             //player 1 start
-            m_processor.setFlag(1, 1);
+            setFlag(1, 1);
             break;
         case sf::Keyboard::Space:
             //player 1 shoot
-            m_processor.setFlag(1, 4);
+            setFlag(1, 4);
             break;
         case sf::Keyboard::A:
             //player 1 left
-            m_processor.setFlag(1, 5);
+            setFlag(1, 5);
             break;
         case sf::Keyboard::D:
             //player 1 right
-            m_processor.setFlag(1, 6);
+            setFlag(1, 6);
             break;
         case sf::Keyboard::LControl:
             //player 2 shoot
-            m_processor.setFlag(2, 4);
+            setFlag(2, 4);
             break;
         case sf::Keyboard::Left:
             //player 2 left
-            m_processor.setFlag(2, 5);
+            setFlag(2, 5);
             break;
         case sf::Keyboard::Right:
             //player 2 right
-            m_processor.setFlag(2, 6);
+            setFlag(2, 6);
             break;
         }
     }
@@ -157,37 +210,37 @@ void Machine::handleEvent(const sf::Event& evt)
             m_processor.update(5000);
             break;*/
         case sf::Keyboard::Num0:
-            m_processor.unsetFlag(1, 0);
+            unsetFlag(1, 0);
             break;
         case sf::Keyboard::Num1:
-            m_processor.unsetFlag(1, 2);
+            unsetFlag(1, 2);
             break;
         case sf::Keyboard::Num2:
-            m_processor.unsetFlag(1, 1);
+            unsetFlag(1, 1);
             break;
         case sf::Keyboard::Space:
             //player 1 shoot
-            m_processor.unsetFlag(1, 4);
+            unsetFlag(1, 4);
             break;
         case sf::Keyboard::A:
             //player 1 left
-            m_processor.unsetFlag(1, 5);
+            unsetFlag(1, 5);
             break;
         case sf::Keyboard::D:
             //player 1 right
-            m_processor.unsetFlag(1, 6);
+            unsetFlag(1, 6);
             break;
         case sf::Keyboard::LControl:
             //player 2 shoot
-            m_processor.unsetFlag(2, 4);
+            unsetFlag(2, 4);
             break;
         case sf::Keyboard::Left:
             //player 2 left
-            m_processor.unsetFlag(2, 5);
+            unsetFlag(2, 5);
             break;
         case sf::Keyboard::Right:
             //player 2 right
-            m_processor.unsetFlag(2, 6);
+            unsetFlag(2, 6);
             break;
         }
     }
@@ -199,4 +252,16 @@ void Machine::draw()
     m_renderWindow.draw(m_display);
     m_renderWindow.draw(m_infoText);
     m_renderWindow.display();
+}
+
+void Machine::setFlag(std::size_t port, Byte flag)
+{
+    assert(flag < 8);
+    m_ports[port] |= (1 << flag);
+}
+
+void Machine::unsetFlag(std::size_t port, Byte flag)
+{
+    assert(flag < 8);
+    m_ports[port] &= ~(1 << flag);
 }

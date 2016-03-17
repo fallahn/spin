@@ -1288,6 +1288,7 @@ void CPU::compare(std::int16_t result)
     m_flags.ac = (m_registers.A & 0xF) > (result & 0xF);
     m_flags.cy = (result > 0xFF || result < 0);
     m_flags.s = (result >> 7);
+    m_flags.z = !(result);
     setParity(result);
 
     m_registers.programCounter++;
@@ -1721,27 +1722,28 @@ void CPU::poppsw()
 
 
 //----IO instructions----//
+//TODO make these configurable by program using this CPU
+//via a callback or somesuch
 //0xDB
 void CPU::in()
 {
     Byte port = m_memory[m_registers.programCounter + 1];
+    m_registers.A = handleInput(port);
 
-    switch (port)
-    {
-    default: break;
-    case 1:
-        m_registers.A = m_ports[1];
-        break;
-    case 2:
-        m_registers.A = m_ports[2];
-        break;
-    case 3:
-    {
-        Word v = (m_shiftByte1 << 8) | m_shiftByte0;
-        m_registers.A = ((v >> (8 - m_shiftOffset)) & 0xFF);
-    }
-    break;
-    }
+    //switch (port)
+    //{
+    //default: break;
+    //case 1:
+    //    m_registers.A = m_ports[1];
+    //    break;
+    //case 2:
+    //    m_registers.A = m_ports[2];
+    //    break;
+    //case 3:
+    //    m_registers.A = ((m_shiftValue << m_shiftOffset) & 0xFF);
+
+    //    break;
+    //}
 
     m_registers.programCounter += 2;
 }
@@ -1749,18 +1751,34 @@ void CPU::in()
 void CPU::out()
 {
     Byte port = m_memory[m_registers.programCounter + 1];
+    handleOutput(port, m_registers.A);
 
-    switch (port)
-    {
-    default: break;
-    case 2:
-        m_shiftOffset = m_registers.A & 0x7;
-        break;
-    case 4:
-        m_shiftByte0 = m_shiftByte1;
-        m_shiftByte1 = m_registers.A;
-        break;
-    }
+    //switch (port)
+    //{
+    //default: break;
+    //case 2:
+    //    m_shiftOffset = m_registers.A;
+    //    break;
+    //case 3:
+    //    //sound
+    //    //bit 1 = spaceship sound (looped)
+    //    //bit 2 = Shot
+    //    //bit 3 = Your ship hit
+    //    //bit 4 = Invader hit
+    //    //bit 5 = Extended play sound
+    //    break;
+    //case 4:
+    //    m_shiftValue = (m_shiftValue << 8) | m_registers.A;
+    //    break;
+    //case 5:
+    //    //bit 0 = invaders sound 1
+    //    //bit 1 = invaders sound 2
+    //    //bit 2 = invaders sound 3
+    //    //bit 3 = invaders sound 4
+    //    //bit 4 = spaceship hit
+    //    //bit 5 = amplifier enabled/disabled
+    //    break;
+    //}
 
     m_registers.programCounter += 2;
 }

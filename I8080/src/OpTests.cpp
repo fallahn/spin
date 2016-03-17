@@ -1251,18 +1251,241 @@ void CPU::testRAL()
 
 void CPU::testLogic()
 {
-    //TODO expand this out to every opcode
+    std::function<void()> rstTest = [this]()
+    {
+        m_registers.programCounter = 0;
+        m_registers.A = 0;
+        m_registers.B = 1;
+        m_registers.C = 2;
+        m_registers.D = 4;
+        m_registers.E = 8;
+        m_registers.H = 16;
+        m_registers.L = 32;
+        m_memory[m_registers.HL] = 64;
+        m_memory[9] = 128;
+    };
+    rstTest();
+
+    anaa();
+    assert(m_registers.A == 0);
+    assert(m_registers.programCounter == 1);
+
+    m_registers.A = 0xFF;
+    anab();
+    assert(m_registers.A == 1);
+    assert(m_registers.programCounter == 2);
+
+    m_registers.A = 0xFF;
+    anac();
+    assert(m_registers.A == 2);
+    assert(m_registers.programCounter == 3);
+
+    m_registers.A = 0xFF;
+    anad();
+    assert(m_registers.A == 4);
+    assert(m_registers.programCounter == 4);
+
+    m_registers.A = 0xFF;
+    anae();
+    assert(m_registers.A == 8);
+    assert(m_registers.programCounter == 5);
+
+    m_registers.A = 0xFF;
+    anah();
+    assert(m_registers.A == 16);
+    assert(m_registers.programCounter == 6);
+
+    m_registers.A = 0xFF;
+    anal();
+    assert(m_registers.A == 32);
+    assert(m_registers.programCounter == 7);
+
+    m_registers.A = 0xFF;
+    anam();
+    assert(m_registers.A == 64);
+    assert(m_registers.programCounter == 8);
+
+    m_registers.A = 0xFF;
+    ani();
+    assert(m_registers.A == 128);
+    assert(m_registers.programCounter == 10);
+
+
+    rstTest();
+
+    xraa();
+    assert(m_registers.A == 0);
+    assert(m_registers.programCounter == 1);
+
+    xrab();
+    assert(m_registers.A == 1);
+    assert(m_registers.programCounter == 2);
+
+    xrac();
+    assert(m_registers.A == 3);
+    assert(m_registers.programCounter == 3);
+
+    xrad();
+    assert(m_registers.A == 7);
+    assert(m_registers.programCounter == 4);
+
+    xrae();
+    assert(m_registers.A == 15);
+    assert(m_registers.programCounter == 5);
+
+    xrah();
+    assert(m_registers.A == 31);
+    assert(m_registers.programCounter == 6);
+
+    xral();
+    assert(m_registers.A == 63);
+    assert(m_registers.programCounter == 7);
+
+    xram();
+    assert(m_registers.A == 127);
+    assert(m_registers.programCounter == 8);
+
+    xri();
+    assert(m_registers.A == 255);
+    assert(m_registers.programCounter == 10);
+
+
+    rstTest();
+
+    oraa();
+    assert(m_registers.A == 0);
+    assert(m_registers.programCounter == 1);
+
+    orab();
+    assert(m_registers.A == 1);
+    assert(m_registers.programCounter == 2);
+
+    orac();
+    assert(m_registers.A == 3);
+    assert(m_registers.programCounter == 3);
+
+    orad();
+    assert(m_registers.A == 7);
+    assert(m_registers.programCounter == 4);
+
+    orae();
+    assert(m_registers.A == 15);
+    assert(m_registers.programCounter == 5);
+
+    orah();
+    assert(m_registers.A == 31);
+    assert(m_registers.programCounter == 6);
+
+    oral();
+    assert(m_registers.A == 63);
+    assert(m_registers.programCounter == 7);
+
+    oram();
+    assert(m_registers.A == 127);
+    assert(m_registers.programCounter == 8);
+
+    ori();
+    assert(m_registers.A == 255);
+    assert(m_registers.programCounter == 10);
+}
+void CPU::testCMP()
+{
     m_registers.programCounter = 0;
-    m_registers.A = 0;
-    m_registers.B = 1;
-    m_registers.C = 2;
-    m_registers.D = 4;
+    m_flags.z = 0;
+    m_registers.A = 10;
+    m_registers.B = 20;
+    m_registers.C = 30;
+    m_registers.D = 40;
+    m_registers.E = 50;
+    m_registers.H = 60;
+    m_registers.L = 70;
+    m_memory[m_registers.HL] = 80;
+    m_memory[16] = 90;
+    m_memory[18] = 100;
 
+    cmpa();
+    assert(m_flags.z == 1);
+    assert(m_registers.programCounter == 1);
 
-    //remind ourselves theses tests aren't yet implemented
-    std::cout << "FAILED all AND tests" << std::endl;
-    std::cout << "FAILED all XOR tests" << std::endl;
-    std::cout << "FAILED all OR tests" << std::endl;
+    m_registers.A = 10;
+    cmpb();
+    assert(m_flags.z == 0);
+    assert(m_registers.programCounter == 2);
+
+    m_registers.A = m_registers.B;
+    cmpb();
+    assert(m_flags.z == 1);
+    assert(m_registers.programCounter == 3);
+
+    m_registers.A = 10;
+    cmpc();
+    assert(m_flags.z == 0);
+    assert(m_registers.programCounter == 4);
+
+    m_registers.A = m_registers.C;
+    cmpc();
+    assert(m_flags.z == 1);
+    assert(m_registers.programCounter == 5);
+
+    m_registers.A = 10;
+    cmpd();
+    assert(m_flags.z == 0);
+    assert(m_registers.programCounter == 6);
+
+    m_registers.A = m_registers.D;
+    cmpd();
+    assert(m_flags.z == 1);
+    assert(m_registers.programCounter == 7);
+
+    m_registers.A = 10;
+    cmpe();
+    assert(m_flags.z == 0);
+    assert(m_registers.programCounter == 8);
+
+    m_registers.A = m_registers.E;
+    cmpe();
+    assert(m_flags.z == 1);
+    assert(m_registers.programCounter == 9);
+
+    m_registers.A = 10;
+    cmph();
+    assert(m_flags.z == 0);
+    assert(m_registers.programCounter == 10);
+
+    m_registers.A = m_registers.H;
+    cmph();
+    assert(m_flags.z == 1);
+    assert(m_registers.programCounter == 11);
+
+    m_registers.A = 10;
+    cmpl();
+    assert(m_flags.z == 0);
+    assert(m_registers.programCounter == 12);
+
+    m_registers.A = m_registers.L;
+    cmpl();
+    assert(m_flags.z == 1);
+    assert(m_registers.programCounter == 13);
+
+    m_registers.A = 10;
+    cmpm();
+    assert(m_flags.z == 0);
+    assert(m_registers.programCounter == 14);
+
+    m_registers.A = m_memory[m_registers.HL];
+    cmpm();
+    assert(m_flags.z == 1);
+    assert(m_registers.programCounter == 15);
+
+    m_registers.A = 10;
+    cpi();
+    assert(m_flags.z == 0);
+    assert(m_registers.programCounter == 17);
+
+    m_registers.A = m_memory[m_registers.programCounter + 1];
+    cpi();
+    assert(m_flags.z == 1);
+    assert(m_registers.programCounter == 19);
 }
 
 void CPU::testJMP()

@@ -76,9 +76,6 @@ CPU::Registers::Registers()
 CPU::CPU()
     : m_cycleCount      (0),
     m_currentOpcode     (0),
-    m_shiftByte0        (0),
-    m_shiftByte1        (0),
-    m_shiftOffset       (0),
     m_interruptEnabled  (false),
     m_interruptPending  (0)
 {
@@ -92,7 +89,6 @@ CPU::CPU()
 
     std::memset(m_memory.data(), 0, MEM_SIZE);
     m_memory[0x1FFF] = 0xC3; //jumps to zero in inf loop by default
-    std::memset(m_ports.data(), 0, PORT_COUNT);
 
     //opcode pointer table - EEEEE these should all be static :S
     m_opcodes =
@@ -127,9 +123,6 @@ void CPU::reset()
 {   
     m_cycleCount = 0;
     m_currentOpcode = 0;
-    m_shiftByte0 = 0;
-    m_shiftByte1 = 0;
-    m_shiftOffset = 0;
     m_interruptEnabled = false;
     m_interruptPending = 0;
 
@@ -144,7 +137,6 @@ void CPU::reset()
 
     std::memset(m_memory.data(), 0, MEM_SIZE);
     m_memory[0x1FFF] = 0xC3; //jumps to zero in inf loop by default
-    std::memset(m_ports.data(), 0, PORT_COUNT);
 }
 
 namespace
@@ -152,7 +144,7 @@ namespace
     std::uint32_t totalCycles = 0;
 }
 
-void CPU::update(std::int32_t count)
+std::int32_t CPU::update(std::int32_t count)
 {
     assert(count > 0);
 
@@ -166,8 +158,11 @@ void CPU::update(std::int32_t count)
         EXEC_OPCODE(m_currentOpcode);
         m_cycleCount -= opCycles[m_currentOpcode];
         m_registers.programCounter = m_registers.programCounter % 0x23FF;
-        totalCycles += opCycles[m_currentOpcode];
+        //totalCycles += opCycles[m_currentOpcode];
     }
+    totalCycles += -m_cycleCount;
+
+    return count - m_cycleCount;
 }
 
 void CPU::raiseInterrupt(Byte id)
@@ -218,12 +213,6 @@ bool CPU::loadROM(const std::string& path, Word address, bool rst)
 
 std::string CPU::getInfo() const
 {
-    //std::string str
-    //(
-    //    "Program Counter: " + std::to_string(m_registers.programCounter) +
-    //    "\nCurrent Opcode: " + std::to_string(m_currentOpcode) 
-    //);
-    //return std::move(str);
     std::stringstream ss;
     ss << "A: " << std::hex << (int)m_registers.A << std::endl;
     ss << "BC: " << m_registers.BC << std::endl;
@@ -247,18 +236,6 @@ std::string CPU::getInfo() const
 const Byte* CPU::getVRAM() const
 {
     return &m_memory[VRAM_OFFSET];
-}
-
-void CPU::setFlag(std::size_t port, std::uint8_t flag)
-{
-    assert(port < m_ports.size() && flag < 8);
-    m_ports[port] |= (1 << flag);
-}
-
-void CPU::unsetFlag(std::size_t port, std::uint8_t flag)
-{
-    assert(port < m_ports.size() && flag < 8);
-    m_ports[port] &= ~(1 << flag);
 }
 
 //private

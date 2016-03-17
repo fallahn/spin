@@ -105,7 +105,8 @@ void testRAR();
 
 //test 8 bit AND, XOR, OR
 void testLogic();
-
+//
+void testCMP();
 //
 void testJMP();
 //
@@ -246,6 +247,7 @@ void runTests()
     testRAL();
 
     testLogic();
+    testCMP();
 
     testJMP();
     testJNZ();

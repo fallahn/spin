@@ -46,6 +46,11 @@ private:
 
     I8080::CPU m_processor;
 
+    std::array<Byte, I8080::PORT_COUNT> m_ports;
+
+    Word m_shiftValue;
+    Word m_shiftOffset;
+
     sf::Text m_infoText;
     sf::Font m_font;
 
@@ -54,6 +59,9 @@ private:
     void update(float dt);
     void handleEvent(const sf::Event&);
     void draw();
+
+    void setFlag(std::size_t, Byte);
+    void unsetFlag(std::size_t, Byte);
 };
 
 #endif //SP_MACHINE_HPP_

@@ -27,6 +27,7 @@ source distribution.
 #include <cstdint>
 #include <string>
 #include <array>
+#include <functional>
 
 using Byte = std::uint8_t;
 using Word = std::uint16_t;
@@ -42,6 +43,21 @@ namespace I8080
     class CPU final
     {
     public:
+        /*!
+        \brief Used to handle the Input Opcode.
+        Function receives a byte representing the
+        port number of the I/O to be affected, and
+        returns a value which is the result of the
+        operation on that port
+        */
+        using InputHandler = std::function<Byte(Byte)>;
+        /*!
+        \brief Used to handle the Output Opcode.
+        Function receives a byte representing the output
+        port number, and the current value of the A register
+        */
+        using OutputHandler = std::function<void(Byte, Byte)>;
+
         CPU();
         ~CPU() = default;
 
@@ -54,8 +70,9 @@ namespace I8080
         void reset();
         /*!
         \brief Execute given number of emulation cycles
+        \returns Number of cycles actually executed
         */
-        void update(std::int32_t);
+        std::int32_t update(std::int32_t);
         /*!
         \brief Raise an interrupt with the given ID
         */
@@ -78,14 +95,14 @@ namespace I8080
         const Byte* getVRAM() const;
 
         /*!
-        \brief Sets given flag on given port
+        \brief Sets the input handling function
         */
-        void setFlag(std::size_t, std::uint8_t);
+        void setInputHandler(const InputHandler& ih) { handleInput = ih; }
 
         /*!
-        \brief Unsets given flag on fiven port
+        \brief Sets the output handling function
         */
-        void unsetFlag(std::size_t, std::uint8_t);
+        void setOutputHandler(const OutputHandler& oh) { handleOutput = oh; }
 
     private:
 
@@ -150,12 +167,6 @@ namespace I8080
         Byte m_currentOpcode;
         std::array<Byte, MEM_SIZE> m_memory;
 
-        std::array<Byte, PORT_COUNT> m_ports;
-
-        Byte m_shiftByte0;
-        Byte m_shiftByte1;
-        Byte m_shiftOffset;
-
         bool m_interruptEnabled;
         Byte m_interruptPending; //flags of interrupt IDs
 
@@ -165,6 +176,9 @@ namespace I8080
         Word getWord(Word);
 
         void inline setParity(std::int16_t);
+
+        std::function<Byte(Byte)> handleInput;
+        std::function<void(Byte, Byte)> handleOutput;
 
         //opcode list is pretty large so it has its
         //own header file included here
