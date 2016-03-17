@@ -863,8 +863,106 @@ void CPU::testSUB()
     assert(m_registers.A == 64);
     assert(m_registers.programCounter == 10);
 }
-void CPU::testSBB() {}
+void CPU::testSBB()
+{
+    m_registers.programCounter = 0;
+    m_registers.A = 100;
+    m_registers.B = 1;
+    m_registers.C = 2;
+    m_registers.D = 3;
+    m_registers.E = 4;
+    m_registers.H = 5;
+    m_registers.L = 6;
+    m_memory[m_registers.HL] = 7;
+    m_memory[9] = 8;
 
+    m_flags.cy = 1;
+    sbba();
+    assert(m_registers.A == 255);
+    assert(m_flags.cy = 1);
+    assert(m_registers.programCounter == 1);
+
+    sbbb();
+    assert(m_registers.A == 253);
+    assert(m_registers.programCounter == 2);
+
+    m_flags.cy = 1;
+    sbbc();
+    assert(m_registers.A == 250);
+    assert(m_registers.programCounter == 3);
+
+    m_flags.cy = 1;
+    sbbd();
+    assert(m_registers.A == 246);
+    assert(m_registers.programCounter == 4);
+
+    m_flags.cy = 1;
+    sbbe();
+    assert(m_registers.A == 241);
+    assert(m_registers.programCounter == 5);
+
+    m_flags.cy = 1;
+    sbbh();
+    assert(m_registers.A == 235);
+    assert(m_registers.programCounter == 6);
+
+    m_flags.cy = 1;
+    sbbl();
+    assert(m_registers.A == 228);
+    assert(m_registers.programCounter == 7);
+
+    m_flags.cy = 1;
+    sbbm();
+    assert(m_registers.A == 220);
+    assert(m_registers.programCounter == 8);
+
+    m_flags.cy = 1;
+    sbi();
+    assert(m_registers.A == 211);
+    assert(m_registers.programCounter == 10);
+}
+
+void CPU::testDAD()
+{
+    m_registers.programCounter = 0;
+    m_registers.BC = 100;
+    m_registers.DE = 200;
+    m_registers.HL = 400;
+    m_registers.stackPointer = 2000;
+
+    dadb();
+    assert(m_registers.HL == 500);
+    assert(m_registers.programCounter == 1);
+
+    dadd();
+    assert(m_registers.HL == 700);
+    assert(m_registers.programCounter == 2);
+
+    dadh();
+    assert(m_registers.HL == 1400);
+    assert(m_registers.programCounter == 3);
+
+    dadsp();
+    assert(m_registers.HL == 3400);
+    assert(m_registers.programCounter == 4);
+}
+
+void CPU::testCONT()
+{
+    m_registers.programCounter = 0;
+    m_interruptEnabled = true;
+
+    di();
+    assert(!m_interruptEnabled);
+    assert(m_registers.programCounter == 1);
+
+    ei();
+    assert(m_interruptEnabled);
+    assert(m_registers.programCounter == 2);
+
+    nop();
+    assert(m_registers.programCounter == 3);
+}
 
 void CPU::testINC8()
 {
@@ -1160,33 +1258,11 @@ void CPU::testLogic()
     m_registers.C = 2;
     m_registers.D = 4;
 
-    anab();
-    if (m_registers.A != 0)
-    {
-        std::cout << "AND test failed: A incorrect" << std::endl;
-        return;
-    }
-    xrac();
-    if (m_registers.A != 2)
-    {
-        std::cout << "XOR test failed: A incorrect" << std::endl;
-        return;
-    }
-    orad();
-    if (m_registers.A != 6)
-    {
-        std::cout << "OR test failed: A incorrect" << std::endl;
-        return;
-    }
 
-    if (m_registers.programCounter != 3)
-    {
-        std::cout << "LOGIC test failed: program counter incorrect" << std::endl;
-    }
-    else
-    {
-        std::cout << "LOGIC test passed!" << std::endl;
-    }
+    //remind ourselves theses tests aren't yet implemented
+    std::cout << "FAILED all AND tests" << std::endl;
+    std::cout << "FAILED all XOR tests" << std::endl;
+    std::cout << "FAILED all OR tests" << std::endl;
 }
 
 void CPU::testJMP()
@@ -2329,10 +2405,10 @@ void CPU::testPUSHPSW()
     m_flags.p = 1;
     m_flags.s = 1;
     m_flags.z = 1;
-    m_flags.psw = 0;
 
     pushpsw();
 
+    Byte psw = *(Byte*)(&m_flags);
     if (m_registers.stackPointer != 0xFFFD)
     {
         std::cout << "PUSHPSW test failed: stack pointer incorrect" << std::endl;
@@ -2341,11 +2417,11 @@ void CPU::testPUSHPSW()
     {
         std::cout << "PUSHPSW test failed: program counter incorrect" << std::endl;
     }
-    else if (m_flags.psw != 0b11010101)
+    else if (psw != 0b11010101)
     {
         std::cout << "PUSHPSW test failed: psw value incorrect" << std::endl;
     }
-    else if (m_memory[m_registers.stackPointer] != m_flags.psw)
+    else if (m_memory[m_registers.stackPointer] != psw)
     {
         std::cout << "PUSHPSW test failed: incorrect psw pushed on to stack" << std::endl;
     }
@@ -2452,10 +2528,10 @@ void CPU::testPOPPSW()
     m_flags.p = 0;
     m_flags.s = 0;
     m_flags.z = 0;
-    m_flags.psw = 0;
 
     poppsw();
 
+    Byte psw = *(Byte*)(&m_flags);
     if (m_registers.stackPointer != 0xFFFF)
     {
         std::cout << "POPPSW test failed: incorrect stack pointer value" << std::endl;
@@ -2472,7 +2548,7 @@ void CPU::testPOPPSW()
     {
         std::cout << "POPPSW test failed: incorrect flag value" << std::endl;
     }
-    else if (m_flags.psw != 0b11010101)
+    else if (psw != 0b11010101)
     {
         std::cout << "POPPSW test failed: incorrect psw value" << std::endl;
     }

@@ -77,6 +77,13 @@ void testSUB();
 //
 void testSBB();
 
+//double add instructions
+void testDAD();
+
+
+//tests control instructions
+void testCONT();
+
 //increment 8 bit registers
 void testINC8();
 //decrement 8 bit registers
@@ -222,6 +229,10 @@ void runTests()
 
     testSUB();
     testSBB();
+
+    testDAD();
+
+    testCONT();
 
     testINC8();
     testDEC8();

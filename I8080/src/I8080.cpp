@@ -88,12 +88,7 @@ CPU::CPU()
     m_registers.programCounter = 0;
     m_registers.stackPointer = 0xFFFF;
 
-    m_flags.psw = 0;
-    m_flags.s = 0;
-    m_flags.z = 0;
-    m_flags.ac = 0;
-    m_flags.p = 0;
-    m_flags.cy = 0;
+    *(Byte*)(&m_flags) = 0;
 
     std::memset(m_memory.data(), 0, MEM_SIZE);
     m_memory[0x1FFF] = 0xC3; //jumps to zero in inf loop by default
@@ -145,12 +140,7 @@ void CPU::reset()
     m_registers.programCounter = 0;
     m_registers.stackPointer = 0xFFFF;
 
-    m_flags.psw = 0;
-    m_flags.s = 0;
-    m_flags.z = 0;
-    m_flags.ac = 0;
-    m_flags.p = 0;
-    m_flags.cy = 0;
+    *(Byte*)(&m_flags) = 0;
 
     std::memset(m_memory.data(), 0, MEM_SIZE);
     m_memory[0x1FFF] = 0xC3; //jumps to zero in inf loop by default
@@ -217,7 +207,7 @@ bool CPU::loadROM(const std::string& path, Word address, bool rst)
     auto size = file.tellg();
     file.seekg(0, file.beg);
 
-    if (size > 0 && size < (m_memory.size() - address)) //TODO this doesn't accoutn for stack space...
+    if (size > 0 && size < (m_memory.size() - address)) //TODO this doesn't account for stack space...
     {
         file.read((char*)&m_memory[address], size);
         return true;

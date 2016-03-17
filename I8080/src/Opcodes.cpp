@@ -42,24 +42,6 @@ void CPU::setParity(std::int16_t value)
     m_flags.p = !(byte & 0x1);
 }
 
-void CPU::setPSW()
-{
-    (m_flags.s) ? m_flags.psw |= 0x80 : m_flags.psw &= ~0x80;
-    (m_flags.z) ? m_flags.psw |= 0x40 : m_flags.psw &= ~0x40;
-    (m_flags.ac) ? m_flags.psw |= 0x10 : m_flags.psw &= ~0x10;
-    (m_flags.p) ? m_flags.psw |= 0x04 : m_flags.psw &= ~0x04;
-    (m_flags.cy) ? m_flags.psw |= 0x01 : m_flags.psw &= ~0x01;
-}
-
-void CPU::getFlagsFromPSW()
-{
-    m_flags.s = (m_flags.psw & 0x80) ? 1 : 0;
-    m_flags.z = (m_flags.psw & 0x40) ? 1 : 0;
-    m_flags.ac = (m_flags.psw & 0x10) ? 1 : 0;
-    m_flags.p = (m_flags.psw & 0x04) ? 1 : 0;
-    m_flags.cy = (m_flags.psw & 0x01) ? 1 : 0;
-}
-
 void CPU::notImpl()
 {
     throw("Opcode not implemented, or illegal");
@@ -828,6 +810,7 @@ void CPU::dadsp()
 
     m_flags.cy = (result > 0xFFFF || result < 0);
     m_registers.HL = result & 0xFFFF;
+    m_registers.programCounter++;
 }
 
 //----control instructions----//
@@ -1704,8 +1687,7 @@ void CPU::pushh()
 //0xF5
 void CPU::pushpsw()
 {
-    setPSW();
-    m_memory[m_registers.stackPointer - 2] = m_flags.psw;
+    m_memory[m_registers.stackPointer - 2] = *(Byte*)(&m_flags);
     m_memory[m_registers.stackPointer - 1] = m_registers.A;
     m_registers.stackPointer -= 2;
     m_registers.programCounter++;
@@ -1732,9 +1714,8 @@ void CPU::poph()
 void CPU::poppsw()
 {
     m_registers.A = m_memory[m_registers.stackPointer + 1];
-    m_flags.psw = m_memory[m_registers.stackPointer];
+    *(Byte*)(&m_flags) = m_memory[m_registers.stackPointer];
     m_registers.stackPointer += 2;
-    getFlagsFromPSW();
     m_registers.programCounter++;
 }
 

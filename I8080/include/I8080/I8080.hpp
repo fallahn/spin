@@ -143,7 +143,6 @@ namespace I8080
             Byte pad3   : 1;
             Byte z      : 1; //zero flag
             Byte s      : 1; //sign flag
-            Byte psw    = 0; //processor status word
         }m_flags;
 
         std::int32_t m_cycleCount;
@@ -166,8 +165,6 @@ namespace I8080
         Word getWord(Word);
 
         void inline setParity(std::int16_t);
-        void inline setPSW();
-        void inline getFlagsFromPSW();
 
         //opcode list is pretty large so it has its
         //own header file included here
