@@ -157,8 +157,6 @@ std::int32_t CPU::update(std::int32_t count)
         m_currentOpcode = m_memory[m_registers.programCounter];
         EXEC_OPCODE(m_currentOpcode);
         m_cycleCount -= opCycles[m_currentOpcode];
-        m_registers.programCounter = m_registers.programCounter % 0x23FF;
-        //totalCycles += opCycles[m_currentOpcode];
     }
     totalCycles += -m_cycleCount;
 
