@@ -146,7 +146,7 @@ namespace
 
 std::int32_t CPU::update(std::int32_t count)
 {
-    assert(count > 0);
+    //assert(count > 0);
 
     //fetch the opcode from memory
     //then execute it and update the number of CPU
@@ -157,6 +157,13 @@ std::int32_t CPU::update(std::int32_t count)
         m_currentOpcode = m_memory[m_registers.programCounter];
         EXEC_OPCODE(m_currentOpcode);
         m_cycleCount -= opCycles[m_currentOpcode];
+
+#ifdef  DEBUG_TOOLS
+        //TODO replace this with circular buffer
+        //m_callstack.push_front(m_registers.programCounter);
+        //if (m_callstack.size() > 50) m_callstack.pop_back();
+#endif //DEBUG_TOOLS
+
     }
     totalCycles += -m_cycleCount;
 

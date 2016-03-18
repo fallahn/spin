@@ -28,6 +28,8 @@ source distribution.
 #include <string>
 #include <array>
 #include <functional>
+#include <list>
+#include <vector>
 
 using Byte = std::uint8_t;
 using Word = std::uint16_t;
@@ -103,6 +105,10 @@ namespace I8080
         \brief Sets the output handling function
         */
         void setOutputHandler(const OutputHandler& oh) { handleOutput = oh; }
+
+#ifdef DEBUG_TOOLS
+        void disassemble();
+#endif //DEBUG_TOOLS
 
     private:
 
@@ -190,6 +196,25 @@ namespace I8080
 #ifdef OP_TEST
 #include <I8080/OpTests.hpp>
 #endif // OP_TEST
+
+#ifdef DEBUG_TOOLS
+        std::list<Word> m_callstack;
+
+        struct Dasm
+        {
+            enum class Type
+            {
+                Opcode,
+                Operand
+            };
+            
+            std::string mnem;
+            Byte operand0 = 0;
+            Byte operand1 = 0;
+            Type type = Type::Opcode;
+        };
+        std::vector<Dasm> m_disassembly;
+#endif //DEBUG_TOOLS
 
     };
 }

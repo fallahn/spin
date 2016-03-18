@@ -44,7 +44,8 @@ void CPU::setParity(std::int16_t value)
 
 void CPU::notImpl()
 {
-    throw("Opcode not implemented, or illegal");
+    //throw("Opcode not implemented, or illegal");
+    auto a = m_disassembly[m_registers.programCounter];
 }
 
 //----8 bit transfer instructions----//

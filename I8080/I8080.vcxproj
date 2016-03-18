@@ -77,7 +77,7 @@
       <Optimization>Disabled</Optimization>
       <SDLCheck>true</SDLCheck>
       <AdditionalIncludeDirectories>include;</AdditionalIncludeDirectories>
-      <PreprocessorDefinitions>OP_TEST;_MBCS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>DEBUG_TOOLS;OP_TEST;_MBCS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
     </ClCompile>
     <PostBuildEvent>
       <Command>copy /Y "$(TargetDir)$(TargetName).lib" "$(SolutionDir)SpIn\lib\$(TargetName).lib"</Command>
@@ -126,6 +126,7 @@
     <ClInclude Include="include\I8080\OpTests.hpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="src\Debug.cpp" />
     <ClCompile Include="src\I8080.cpp" />
     <ClCompile Include="src\Opcodes.cpp" />
     <ClCompile Include="src\OpTests.cpp" />
