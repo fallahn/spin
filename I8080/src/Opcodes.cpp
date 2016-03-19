@@ -45,7 +45,9 @@ void CPU::setParity(std::int16_t value)
 void CPU::notImpl()
 {
     //throw("Opcode not implemented, or illegal");
+#ifdef DEBUG_TOOLS
     auto a = m_disassembly[m_registers.programCounter];
+#endif //DEBUG_TOOLS
 }
 
 //----8 bit transfer instructions----//
@@ -1073,34 +1075,37 @@ void CPU::cmc()
 //0x07
 void CPU::rlc()
 {
-    m_flags.cy = m_registers.A >> 7;
-    m_registers.A = (m_registers.A << 1) | (m_registers.A >> 7);
+    uint8_t a = m_registers.A;
+    m_registers.A = ((a & 0x80) >> 7) | (a << 1);
+    m_flags.cy = (0x80 == (a & 0x80));
+
     m_registers.programCounter++;
 }
 //0x0F
 void CPU::rrc()
 {
-    std::int16_t result = (m_registers.A >> 1) | ((m_registers.A & 0x1) << 7);
-    m_flags.cy = (m_registers.A & 0x01);
-    m_registers.A = result & 0xFF;
+    uint8_t a = m_registers.A;
+    m_registers.A = ((a & 0x1) << 7) | (a >> 1);
+    m_flags.cy = (1 == (a & 0x1));
+
     m_registers.programCounter++;
 }
 //0x17
 void CPU::ral()
 {
-    std::uint16_t temp = m_flags.cy;
-    m_flags.cy = (m_registers.A & 0x80);
-    m_registers.A = (m_registers.A << 1) | (temp & 0x80);
+    uint8_t a = m_registers.A;
+    m_registers.A = m_flags.cy | (a << 1);
+    m_flags.cy = (0x80 == (a & 0x80));
+
     m_registers.programCounter++;
 }
 //0x1F
 void CPU::rar()
 {
-    std::int16_t result = (m_registers.A >> 1) | (m_flags.cy << 7);
+    Byte a = m_registers.A;
+    m_registers.A = (m_flags.cy << 7) | (a >> 1);
+    m_flags.cy = (1 == (a & 0x1));
 
-    m_flags.cy = result & 0x1;
-
-    m_registers.A = result & 0xFF;
     m_registers.programCounter++;
 }
 

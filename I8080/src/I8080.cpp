@@ -159,9 +159,7 @@ std::int32_t CPU::update(std::int32_t count)
         m_cycleCount -= opCycles[m_currentOpcode];
 
 #ifdef  DEBUG_TOOLS
-        //TODO replace this with circular buffer
-        //m_callstack.push_front(m_registers.programCounter);
-        //if (m_callstack.size() > 50) m_callstack.pop_back();
+        m_callstack.push(m_registers.programCounter);
 #endif //DEBUG_TOOLS
 
     }

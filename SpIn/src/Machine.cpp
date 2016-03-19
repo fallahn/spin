@@ -100,7 +100,6 @@ void Machine::run()
     //m_processor.loadROM("assets/roms/invaders.g", 0x0800, false);
     //m_processor.loadROM("assets/roms/invaders.f", 0x1000, false);
     //m_processor.loadROM("assets/roms/invaders.e", 0x1800, false);
-    //m_processor.disassemble();
 
     //m_processor.loadROM("assets/roms/lrescue.1", 0);
     //m_processor.loadROM("assets/roms/lrescue.2", 0x800, false);
@@ -114,7 +113,10 @@ void Machine::run()
     m_processor.loadROM("assets/roms/tn03", 0x1000, false);
     m_processor.loadROM("assets/roms/tn04", 0x1800, false);
     m_processor.loadROM("assets/roms/tn05-1", 0x4000, false);
+    
+#ifdef DEBUG_TOOLS
     m_processor.disassemble();
+#endif //DEBUG_TOOLS
 
     m_renderWindow.create({ 800, 600 }, "SpIn");
     m_renderWindow.setFramerateLimit(120);

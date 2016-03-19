@@ -28,7 +28,6 @@ source distribution.
 #include <string>
 #include <array>
 #include <functional>
-#include <list>
 #include <vector>
 
 using Byte = std::uint8_t;
@@ -198,9 +197,7 @@ namespace I8080
 #endif // OP_TEST
 
 #ifdef DEBUG_TOOLS
-        std::list<Word> m_callstack;
-
-        struct Dasm
+        struct Dasm final
         {
             enum class Type
             {
@@ -214,6 +211,16 @@ namespace I8080
             Type type = Type::Opcode;
         };
         std::vector<Dasm> m_disassembly;
+
+        class RBuff final
+        {
+        public:
+            void push(Word);
+            Word operator [](std::size_t) const;
+        private:
+            std::array<Word, 20> m_buff;
+            std::size_t m_idx = 0;
+        }m_callstack;
 #endif //DEBUG_TOOLS
 
     };

@@ -28,6 +28,17 @@ source distribution.
 
 using namespace I8080;
 
+void CPU::RBuff::push(Word b)
+{
+    m_buff[m_idx] = b;
+    m_idx = (m_idx + 1) % m_buff.size();
+}
+
+Word CPU::RBuff::operator[](std::size_t idx) const
+{
+    return m_buff[(m_idx + idx - 1) % m_buff.size()];
+}
+
 void CPU::disassemble()
 {
     std::function<void()> addOperand = [this]()
