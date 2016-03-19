@@ -22,11 +22,13 @@ source distribution.
 *********************************************************************/
 
 #include <Display.hpp>
+#include <PostChromeAb.hpp>
 
 #include <SFML/Graphics/RenderStates.hpp>
 #include <SFML/Graphics/RenderTarget.hpp>
 #include <SFML/Graphics/Image.hpp>
 #include <SFML/OpenGL.hpp>
+#include <SFML/System/Clock.hpp>
 
 #include <cstring>
 #include <functional>
@@ -48,8 +50,10 @@ namespace
         "  baseColour.a = 0.5;\n"
         "  vec4 overlayColour = texture2D(u_overlayTexture, gl_TexCoord[0].xy);\n"
         "  vec4 backgroundColour = texture2D(u_backgroundTexture, gl_TexCoord[0].xy);\n"
-        "  gl_FragColor = (baseColour * overlayColour) + (backgroundColour * 2.0);\n"
+        "  gl_FragColor = (baseColour * overlayColour) + (backgroundColour * 1.4);\n"
         "}\n";
+
+    sf::Clock postClock;
 }
 
 Display::Display()
@@ -57,10 +61,6 @@ Display::Display()
     sf::Image img;
     img.create(width, height, sf::Color::White);
     m_baseTexture.loadFromImage(img);
-
-    setOrigin(width / 2.f, height / 2.f);
-    setScale(2.f, 2.f);
-    setRotation(-90.f);
 
     std::memset(m_buffer.data(), 255, m_buffer.size());
 
@@ -95,12 +95,22 @@ Display::Display()
 
     m_overlayTexture.loadFromImage(img);
 
-    m_shader.loadFromMemory(shader, sf::Shader::Fragment);
-    m_shader.setParameter("u_baseTexture", m_baseTexture);
-    m_shader.setParameter("u_overlayTexture", m_overlayTexture);
+    m_blendShader.loadFromMemory(shader, sf::Shader::Fragment);
+    m_blendShader.setParameter("u_baseTexture", m_baseTexture);
+    m_blendShader.setParameter("u_overlayTexture", m_overlayTexture);
 
     m_backgroundTexture.loadFromFile("assets/images/background.png");
-    m_shader.setParameter("u_backgroundTexture", m_backgroundTexture);
+    m_blendShader.setParameter("u_backgroundTexture", m_backgroundTexture);
+
+    m_postBuffer.create(width, height);
+    m_postSprite.setTexture(m_postBuffer.getTexture());
+    m_postSprite.setPosition(512, 384);
+    m_postSprite.setOrigin(width / 2.f, height / 2.f);
+    m_postSprite.rotate(-90.f);
+    m_postSprite.setScale(2.8f, 2.8f);
+
+    m_postShader.loadFromMemory(xy::Shader::PostChromeAb::fragment, sf::Shader::Fragment);
+    m_postShader.setParameter("u_sourceTexture", m_postBuffer.getTexture());
 }
 
 //public 
@@ -119,18 +129,23 @@ void Display::updateBuffer(const std::uint8_t* buffer)
         }
     }
 
-
     sf::Texture::bind(&m_baseTexture);
     glTexSubImage2D(GL_TEXTURE_2D, 0, 0, 0, width, height, GL_RGBA, GL_UNSIGNED_BYTE, m_buffer.data());
     sf::Texture::bind(nullptr);
+
+    m_postShader.setParameter("u_time", postClock.getElapsedTime().asSeconds());
 }
 
 
 //private
 void Display::draw(sf::RenderTarget& rt, sf::RenderStates states) const
 {
-    states.transform *= getTransform();
     states.texture = &m_baseTexture;
-    states.shader = &m_shader;
-    rt.draw(m_vertexArray.data(), m_vertexArray.size(), sf::Quads, states);
+    states.shader = &m_blendShader;
+
+    m_postBuffer.clear();
+    m_postBuffer.draw(m_vertexArray.data(), m_vertexArray.size(), sf::Quads, states);
+    m_postBuffer.display();
+
+    rt.draw(m_postSprite, &m_postShader);
 }

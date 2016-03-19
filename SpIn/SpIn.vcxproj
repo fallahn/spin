@@ -123,6 +123,7 @@
   <ItemGroup>
     <ClInclude Include="include\Display.hpp" />
     <ClInclude Include="include\Machine.hpp" />
+    <ClInclude Include="include\PostChromeAb.hpp" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\Display.cpp" />

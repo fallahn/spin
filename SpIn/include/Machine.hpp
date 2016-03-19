@@ -54,7 +54,17 @@ private:
     sf::Text m_infoText;
     sf::Font m_font;
 
+    sf::Text m_instructionText;
+
     Display m_display;
+
+    enum class Game
+    {
+        SpaceInvaders,
+        BalloonBomber,
+        LunarRescue
+    };
+    void loadGame(Game);
 
     void update(float dt);
     void handleEvent(const sf::Event&);

@@ -27,12 +27,13 @@ source distribution.
 #include <SFML/Graphics/Texture.hpp>
 #include <SFML/Graphics/Vertex.hpp>
 #include <SFML/Graphics/Drawable.hpp>
-#include <SFML/Graphics/Transformable.hpp>
 #include <SFML/Graphics/Shader.hpp>
+#include <SFML/Graphics/RenderTexture.hpp>
+#include <SFML/Graphics/Sprite.hpp>
 
 #include <array>
 
-class Display final : public sf::Drawable, public sf::Transformable
+class Display final : public sf::Drawable
 {
 public:
     Display();
@@ -48,9 +49,13 @@ private:
     sf::Texture m_overlayTexture;
     sf::Texture m_backgroundTexture;
     std::array<sf::Vertex, 4u> m_vertexArray;
-    sf::Shader m_shader;
+    sf::Shader m_blendShader;
 
     std::array<std::uint8_t, 256 * 224 * 4> m_buffer; //using RGBA texture in SFML so w x h x bpp
+
+    mutable sf::RenderTexture m_postBuffer;
+    sf::Sprite m_postSprite;
+    sf::Shader m_postShader;
 
     void draw(sf::RenderTarget&, sf::RenderStates) const override;
 };

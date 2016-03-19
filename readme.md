@@ -1,7 +1,10 @@
 SpIn - Space Invaders emulator
 ------------------------------
 
-Designed with reusable 8080 CPU emulator in mind
+Designed with reusable 8080 CPU emulator in mind.
+
+Should also be capable of running roms of balloon bomber and  
+lunar rescue, as well as space invaders.
 
 /*********************************************************************  
 Matt Marchant 2016  

@@ -137,6 +137,10 @@ void CPU::reset()
 
     std::memset(m_memory.data(), 0, MEM_SIZE);
     m_memory[0x1FFF] = 0xC3; //jumps to zero in inf loop by default
+
+#ifdef DEBUG_TOOLS
+    m_disassembly.clear();
+#endif //DEBUG_TOOLS
 }
 
 namespace

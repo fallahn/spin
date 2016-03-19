@@ -38,9 +38,30 @@ Machine::Machine()
         m_infoText.setFont(m_font);
         m_infoText.setPosition(15.f, 15.f);
         m_infoText.setCharacterSize(12u);
-    }
 
-    m_display.setPosition(400.f, 300.f);
+        m_instructionText.setFont(m_font);
+        m_instructionText.setPosition(850.f, 20.f);
+        m_instructionText.setCharacterSize(14u);
+        m_instructionText.setString(
+            "0 - Insert Coin\n"
+            "1 - Player 1 Start\n"
+            "2 - Player 2 Start\n"
+            "\n"
+            "Player One:\n"
+            "A - Left\n"
+            "D - Right\n"
+            "Space - Fire\n"
+            "\n"
+            "Player Two:\n"
+            "Left - Left\n"
+            "Right - Right\n"
+            "RControl - Fire\n"
+            "\n\n"
+            "F1 - Space Invaders\n"
+            "F2 - Balloon Bomber\n"
+            "F3 - Lunar Rescue\n"
+            "Escape - Quit");
+    }
 
     I8080::CPU::InputHandler ih = [this](Byte port)->Byte
     {
@@ -96,29 +117,7 @@ Machine::Machine()
 //public
 void Machine::run()
 {
-    //m_processor.loadROM("assets/roms/invaders.h", 0);
-    //m_processor.loadROM("assets/roms/invaders.g", 0x0800, false);
-    //m_processor.loadROM("assets/roms/invaders.f", 0x1000, false);
-    //m_processor.loadROM("assets/roms/invaders.e", 0x1800, false);
-
-    //m_processor.loadROM("assets/roms/lrescue.1", 0);
-    //m_processor.loadROM("assets/roms/lrescue.2", 0x800, false);
-    //m_processor.loadROM("assets/roms/lrescue.3", 0x1000, false);
-    //m_processor.loadROM("assets/roms/lrescue.4", 0x1800, false);
-    //m_processor.loadROM("assets/roms/lrescue.5", 0x4000, false);
-    //m_processor.loadROM("assets/roms/lrescue.6", 0x4800, false);
-
-    m_processor.loadROM("assets/roms/tn01", 0);
-    m_processor.loadROM("assets/roms/tn02", 0x800, false);
-    m_processor.loadROM("assets/roms/tn03", 0x1000, false);
-    m_processor.loadROM("assets/roms/tn04", 0x1800, false);
-    m_processor.loadROM("assets/roms/tn05-1", 0x4000, false);
-    
-#ifdef DEBUG_TOOLS
-    m_processor.disassemble();
-#endif //DEBUG_TOOLS
-
-    m_renderWindow.create({ 800, 600 }, "SpIn");
+    m_renderWindow.create({ 1024, 768 }, "SpIn");
     m_renderWindow.setFramerateLimit(120);
 
     sf::Clock frameClock;
@@ -152,6 +151,38 @@ void Machine::run()
 }
 
 //private
+void Machine::loadGame(Game game)
+{
+    switch (game)
+    {
+    case Game::SpaceInvaders:
+        m_processor.loadROM("assets/roms/invaders.h", 0);
+        m_processor.loadROM("assets/roms/invaders.g", 0x0800, false);
+        m_processor.loadROM("assets/roms/invaders.f", 0x1000, false);
+        m_processor.loadROM("assets/roms/invaders.e", 0x1800, false);
+        break;
+    case Game::LunarRescue:
+        m_processor.loadROM("assets/roms/lrescue.1", 0);
+        m_processor.loadROM("assets/roms/lrescue.2", 0x800, false);
+        m_processor.loadROM("assets/roms/lrescue.3", 0x1000, false);
+        m_processor.loadROM("assets/roms/lrescue.4", 0x1800, false);
+        m_processor.loadROM("assets/roms/lrescue.5", 0x4000, false);
+        m_processor.loadROM("assets/roms/lrescue.6", 0x4800, false);
+        break;
+    case Game::BalloonBomber:
+        m_processor.loadROM("assets/roms/tn01", 0);
+        m_processor.loadROM("assets/roms/tn02", 0x800, false);
+        m_processor.loadROM("assets/roms/tn03", 0x1000, false);
+        m_processor.loadROM("assets/roms/tn04", 0x1800, false);
+        m_processor.loadROM("assets/roms/tn05-1", 0x4000, false);
+        break;
+    default:break;
+    }
+#ifdef DEBUG_TOOLS
+    m_processor.disassemble();
+#endif //DEBUG_TOOLS
+}
+
 void Machine::update(float dt)
 {    
     //33,333 * 60 = 1,999,980
@@ -196,7 +227,7 @@ void Machine::handleEvent(const sf::Event& evt)
             //player 1 right
             setFlag(1, 6);
             break;
-        case sf::Keyboard::LControl:
+        case sf::Keyboard::RControl:
             //player 2 shoot
             setFlag(2, 4);
             break;
@@ -215,6 +246,15 @@ void Machine::handleEvent(const sf::Event& evt)
         switch (evt.key.code)
         {
         default:break;
+        case sf::Keyboard::F1:
+            loadGame(Game::SpaceInvaders);
+            break;
+        case sf::Keyboard::F2:
+            loadGame(Game::BalloonBomber);
+            break;
+        case sf::Keyboard::F3:
+            loadGame(Game::LunarRescue);
+            break;
         case sf::Keyboard::Escape:
             m_renderWindow.close();
             break;
@@ -269,9 +309,10 @@ void Machine::handleEvent(const sf::Event& evt)
 
 void Machine::draw()
 {
-    m_renderWindow.clear(sf::Color::Blue);
+    m_renderWindow.clear(/*sf::Color::Blue*/);
     m_renderWindow.draw(m_display);
     m_renderWindow.draw(m_infoText);
+    m_renderWindow.draw(m_instructionText);
     m_renderWindow.display();
 }
 
