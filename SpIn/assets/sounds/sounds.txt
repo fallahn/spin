@@ -1,0 +1,3 @@
+These are not the original arcade sounds, and are, in fact, made
+with sfxr. These sounds are placed in to the public domain and 
+can be freely used for any purpose whatsoever.

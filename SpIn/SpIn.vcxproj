@@ -124,11 +124,13 @@
     <ClInclude Include="include\Display.hpp" />
     <ClInclude Include="include\Machine.hpp" />
     <ClInclude Include="include\PostChromeAb.hpp" />
+    <ClInclude Include="include\SoundPlayer.hpp" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\Display.cpp" />
     <ClCompile Include="src\Machine.cpp" />
     <ClCompile Include="src\main.cpp" />
+    <ClCompile Include="src\SoundPlayer.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

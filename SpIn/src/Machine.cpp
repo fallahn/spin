@@ -96,6 +96,24 @@ Machine::Machine()
             //bit 3 = Your ship hit
             //bit 4 = Invader hit
             //bit 5 = Extended play sound
+        {
+            //get bits which changed
+            auto changed = m_ports[3] ^ value;
+            for (auto i = 0; i < 8; ++i)
+            {
+                if ((changed & (1 << i)) && (value & (1 << i)))
+                {
+                    //sound started
+                    m_soundPlayer.play(i);
+                }
+                else
+                {
+                    //sound stopped
+                }
+            }
+
+            m_ports[3] = value;
+        }
             break;
         case 4:
             m_shiftValue = (m_shiftValue << 8) | value;
@@ -106,7 +124,24 @@ Machine::Machine()
             //bit 2 = invaders sound 3
             //bit 3 = invaders sound 4
             //bit 4 = spaceship hit
-            //bit 5 = amplifier enabled/disabled
+            //bit 5 = amplifier enabled/disabled (presumably this mutes the machine?)
+        {
+            auto changed = m_ports[5] ^ value;
+            for (auto i = 0; i < 8; ++i)
+            {
+                if (changed & (1 << i) && (value & (1 << i)))
+                {
+                    //sound started
+                    m_soundPlayer.play(i + 10);
+                }
+                else
+                {
+                    //sound stopped
+                }
+            }
+
+            m_ports[5] = value;
+        }
             break;
         }
     };

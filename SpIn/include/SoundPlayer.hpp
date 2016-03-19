@@ -21,59 +21,47 @@ and must not be misrepresented as being the original software.
 source distribution.
 *********************************************************************/
 
-#ifndef SP_MACHINE_HPP_
-#define SP_MACHINE_HPP_
+#ifndef SP_SOUNDPLAYER_HPP_
+#define SP_SOUNDPLAYER_HPP_
 
-#include <SFML/Graphics/RenderWindow.hpp>
-#include <SFML/Graphics/Text.hpp>
-#include <SFML/Graphics/Font.hpp>
+#include <SFML/Audio/SoundBuffer.hpp>
+#include <SFML/Audio/Sound.hpp>
 
-#include <I8080/I8080.hpp>
-#include <Display.hpp>
-#include <SoundPlayer.hpp>
+#include <cstdint>
+#include <map>
+#include <list>
 
-class Machine final
+class SoundPlayer final
 {
 public:
-    Machine();
-    ~Machine() = default;
-    Machine(const Machine&) = delete;
-    Machine& operator = (const Machine&) = delete;
+    using ID = std::int32_t;
 
-    void run();
+    enum
+    {
+        Shot = 2,
+        ShipHit = 3,
+        InvaderHit = 4,
+        ExtendedPlay = 5,
+
+        Invader0 = 10,
+        Invader1 = 11,
+        Invader2 = 12,
+        Invader3 = 13,
+        MotherShip = 14
+    };
+
+    SoundPlayer();
+    ~SoundPlayer() = default;
+    SoundPlayer(const SoundPlayer&) = delete;
+    SoundPlayer& operator = (const SoundPlayer&) = delete;
+
+    void update();
+    void play(ID);
 
 private:
-    sf::RenderWindow m_renderWindow;
 
-    I8080::CPU m_processor;
-
-    std::array<Byte, I8080::PORT_COUNT> m_ports;
-
-    Word m_shiftValue;
-    Word m_shiftOffset;
-
-    sf::Text m_infoText;
-    sf::Font m_font;
-
-    sf::Text m_instructionText;
-
-    Display m_display;
-    SoundPlayer m_soundPlayer;
-
-    enum class Game
-    {
-        SpaceInvaders,
-        BalloonBomber,
-        LunarRescue
-    };
-    void loadGame(Game);
-
-    void update(float dt);
-    void handleEvent(const sf::Event&);
-    void draw();
-
-    void setFlag(std::size_t, Byte);
-    void unsetFlag(std::size_t, Byte);
+    std::map<ID, sf::SoundBuffer> m_soundBuffers;
+    std::list<sf::Sound> m_sounds;
 };
 
-#endif //SP_MACHINE_HPP_
+#endif //SP_SOUNDPLAYER_HPP_
