@@ -31,7 +31,7 @@ void CPU::setParity(std::int16_t value)
 {
     Byte byte = 0;
 
-    value = (value & (1 << 16) - 1);
+    value = ((value & (1 << 16)) - 1);
     for (auto i = 0; i < 16; ++i)
     {
         if (value & 0x1) byte++;

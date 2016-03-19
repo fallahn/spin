@@ -156,9 +156,6 @@ void Machine::run()
     m_renderWindow.setFramerateLimit(120);
 
     sf::Clock frameClock;
-    sf::Int64 lastTime = 0;
-    sf::Int64 nextInterrupt = 0;
-    std::uint8_t interruptID = 1;
 
     while (m_renderWindow.isOpen())
     {
